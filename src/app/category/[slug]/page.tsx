@@ -1,5 +1,20 @@
 import { CategoryClient } from '@/components/category/CategoryClient';
 import { createClient } from '@/utils/supabase/server';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const title = slug === 'all' ? 'All Collections' : slug.charAt(0).toUpperCase() + slug.slice(1);
+  
+  return {
+    title: title,
+    description: `Shop the latest ${title} collection at Kaneera by Aashi.`,
+    openGraph: {
+      title: `${title} | Kaneera by Aashi`,
+      description: `Shop the latest ${title} collection at Kaneera by Aashi.`,
+    }
+  };
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

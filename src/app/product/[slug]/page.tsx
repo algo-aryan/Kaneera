@@ -4,6 +4,40 @@ import { Star, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+  
+  const { data: product } = await supabase
+    .from('products')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (!product) return {};
+
+  return {
+    title: product.name,
+    description: product.description || `Buy ${product.name} at Kaneera.`,
+    openGraph: {
+      title: product.name,
+      description: product.description || `Buy ${product.name} at Kaneera.`,
+      images: [
+        {
+          url: product.image_urls[0],
+          width: 1080,
+          height: 1080,
+          alt: product.name,
+        }
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+    }
+  };
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

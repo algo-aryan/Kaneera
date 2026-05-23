@@ -16,8 +16,27 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Kaneera by Aashi | Premium Jewelry",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://kaneera.in'),
+  title: {
+    default: "Kaneera by Aashi | Premium Jewelry",
+    template: "%s | Kaneera by Aashi"
+  },
   description: "Discover elegant, premium jewelry including rings, earrings, bracelets, and anklets.",
+  openGraph: {
+    type: 'website',
+    siteName: 'Kaneera by Aashi',
+    title: 'Kaneera by Aashi | Premium Jewelry',
+    description: 'Discover elegant, premium jewelry including rings, earrings, bracelets, and anklets.',
+    images: [{
+      url: '/hero_banner_jewelry_1779508789302.png',
+      width: 1200,
+      height: 630,
+      alt: 'Kaneera by Aashi Jewelry'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+  }
 };
 
 import { createClient } from '@/utils/supabase/server';
