@@ -12,6 +12,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${title} | Kaneera by Aashi`,
       description: `Shop the latest ${title} collection at Kaneera by Aashi.`,
+      images: [{
+        url: '/hero_banner_jewelry_1779508789302.png',
+        width: 1200,
+        height: 630,
+        alt: `${title} at Kaneera`
+      }]
     }
   };
 }
