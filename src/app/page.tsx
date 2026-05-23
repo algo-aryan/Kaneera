@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-cream">
       {/* Hero Section */}
-      <section className="relative w-full overflow-hidden flex items-center justify-center bg-cream" style={{ height: '90vh' }}>
+      <section className="relative w-full overflow-hidden flex items-end md:items-center justify-center bg-cream pb-20 md:pb-0" style={{ height: '90vh' }}>
         <motion.div 
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

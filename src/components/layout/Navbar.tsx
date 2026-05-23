@@ -28,11 +28,6 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
   return (
     <header className="sticky top-0 z-50 w-full bg-cream/90 backdrop-blur-md border-b border-rose-gold/20">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Mobile Menu Button */}
-        <button className="md:hidden p-2 text-charcoal hover:text-rose-gold transition-colors">
-          <Menu className="w-6 h-6" />
-        </button>
-
         {/* Logo */}
         <Link href="/" className="flex-1 md:flex-none text-center md:text-left">
           <span className="font-serif text-2xl font-bold tracking-wider text-charcoal">

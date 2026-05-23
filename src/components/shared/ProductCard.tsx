@@ -50,17 +50,6 @@ export function ProductCard({ product }: { product: Product }) {
             className="absolute inset-0 w-full h-full object-cover opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105 mix-blend-multiply"
           />
         </Link>
-        
-        {/* Quick Add Button on Hover */}
-        <div className="absolute bottom-4 left-4 right-4 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10 pointer-events-auto">
-          <Button 
-            onClick={handleAddToCart}
-            className="w-full bg-charcoal text-white hover:bg-rose-gold rounded-none uppercase tracking-widest text-xs py-3 h-auto" 
-            variant="secondary"
-          >
-            Quick Add
-          </Button>
-        </div>
       </div>
       
       <div className="flex flex-col items-center text-center space-y-2 mt-2">
