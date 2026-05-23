@@ -78,11 +78,15 @@ export async function POST(req: Request) {
           const email = order.profiles?.email;
           
           if (email) {
+            const addressString = typeof order.shipping_address === 'object' && order.shipping_address !== null 
+              ? order.shipping_address.address || JSON.stringify(order.shipping_address)
+              : order.shipping_address;
+
             await resend.emails.send({
               from: 'Kaneera <orders@kaneera.in>',
               to: [email],
               subject: 'Order Confirmation - Kaneera',
-              html: getOrderConfirmationEmail(order.id, order.total_amount, order.shipping_address)
+              html: getOrderConfirmationEmail(order.id, order.total_amount, addressString)
             });
             console.log(`Order confirmation email sent to ${email}`);
           }

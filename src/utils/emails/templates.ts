@@ -34,6 +34,7 @@ export const getOrderConfirmationEmail = (orderId: string, amount: number, addre
       
       <p>We will send you another email as soon as your package ships.</p>
       <p>With elegance,<br>The Kaneera Team</p>
+      <p style="font-size: 12px; color: #888; margin-top: 30px;"><i>Please do not reply to this email. For any queries, please reach out to our customer support.</i></p>
     </div>
     <div class="footer">
       <p>© ${new Date().getFullYear()} Kaneera. All rights reserved.</p>
@@ -70,6 +71,7 @@ export const getOrderShippedEmail = (orderId: string) => `
       <p>Great news! Your Order <span class="highlight">#${orderId.slice(0, 8).toUpperCase()}</span> has been shipped and is on its way to you.</p>
       <p>Thank you for choosing Kaneera for your premium jewelry needs. We hope you love your new pieces as much as we loved creating them for you.</p>
       <p>With elegance,<br>The Kaneera Team</p>
+      <p style="font-size: 12px; color: #888; margin-top: 30px;"><i>Please do not reply to this email. For any queries, please reach out to our customer support.</i></p>
     </div>
     <div class="footer">
       <p>© ${new Date().getFullYear()} Kaneera. All rights reserved.</p>
