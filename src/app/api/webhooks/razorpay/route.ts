@@ -36,7 +36,12 @@ export async function POST(req: Request) {
     // Process payment.captured event
     if (payload.event === 'payment.captured') {
       const paymentEntity = payload.payload.payment.entity;
-      const razorpayOrderId = paymentEntity.order_id;
+      const internalOrderId = paymentEntity.notes?.internal_order_id;
+      
+      if (!internalOrderId) {
+        console.error('No internal_order_id found in notes');
+        return NextResponse.json({ error: 'Missing internal order ID' }, { status: 400 });
+      }
       
       // Initialize Supabase Admin Client using Service Role Key to bypass RLS
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -49,11 +54,11 @@ export async function POST(req: Request) {
 
       const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-      // We mark the order as paid based on the razorpay_order_id
+      // We mark the order as paid based on the internal_order_id
       const { data: order, error } = await supabaseAdmin
         .from('orders')
         .update({ status: 'paid' })
-        .eq('razorpay_order_id', razorpayOrderId)
+        .eq('id', internalOrderId)
         .eq('status', 'pending')
         .select('*, profiles(email)')
         .single();
@@ -63,7 +68,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Database error' }, { status: 500 });
       }
       
-      console.log(`Order ${razorpayOrderId} marked as paid via webhook.`);
+      console.log(`Order ${internalOrderId} marked as paid via webhook.`);
 
       // Send Email Notification
       const resendApiKey = process.env.RESEND_API_KEY;

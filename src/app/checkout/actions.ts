@@ -105,6 +105,7 @@ export async function createRazorpayOrder(data: { items: any[], shippingAddress:
       amount: amountInPaise,
       currency: "INR",
       receipt: orderRow.id,
+      notes: { internal_order_id: orderRow.id }
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
