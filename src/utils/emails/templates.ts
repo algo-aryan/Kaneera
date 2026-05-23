@@ -80,3 +80,40 @@ export const getOrderShippedEmail = (orderId: string) => `
 </body>
 </html>
 `;
+
+export const getOrderDeliveredEmail = (orderId: string) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #fcfbf9; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; padding: 40px; border-top: 4px solid #d4af37; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .logo { font-size: 28px; font-weight: bold; color: #2c2c2c; letter-spacing: 2px; }
+    .subtitle { font-size: 10px; text-transform: uppercase; letter-spacing: 4px; color: #8e8e8e; margin-top: 4px; }
+    h1 { color: #2c2c2c; font-size: 24px; font-weight: 300; text-align: center; margin-bottom: 30px; }
+    .content { color: #5a5a5a; font-size: 16px; line-height: 1.6; }
+    .highlight { color: #d4af37; font-weight: bold; }
+    .footer { text-align: center; margin-top: 50px; font-size: 12px; color: #a0a0a0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">KANEERA</div>
+      <div class="subtitle">by Aashi</div>
+    </div>
+    <h1>Your Order Has Been Delivered!</h1>
+    <div class="content">
+      <p>Your Order <span class="highlight">#${orderId.slice(0, 8).toUpperCase()}</span> has been successfully delivered.</p>
+      <p>We hope you are delighted with your new Kaneera jewelry. Thank you for shopping with us, and we look forward to serving you again soon.</p>
+      <p>With elegance,<br>The Kaneera Team</p>
+      <p style="font-size: 12px; color: #888; margin-top: 30px;"><i>Please do not reply to this email. For any queries, please reach out to our customer support.</i></p>
+    </div>
+    <div class="footer">
+      <p>© ${new Date().getFullYear()} Kaneera. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
