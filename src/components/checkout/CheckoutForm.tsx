@@ -73,11 +73,13 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
     };
   }, []);
 
-  const handlePlaceOrder = async (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (items.length === 0) return;
     
     setError(null);
+    const formData = new FormData(e.currentTarget);
+    const fullAddress = `${formData.get('address')}, ${formData.get('city')}, ${formData.get('state')} ${formData.get('pincode')}`;
     const finalAddress = selectedAddress === 'new' ? fullAddress : selectedAddress;
 
     startTransition(async () => {
