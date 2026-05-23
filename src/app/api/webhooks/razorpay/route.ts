@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
+import { getOrderConfirmationEmail } from '@/utils/emails/templates';
 
 export async function POST(req: Request) {
   try {
@@ -48,18 +50,42 @@ export async function POST(req: Request) {
       const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
       // We mark the order as paid based on the razorpay_order_id
-      const { error } = await supabaseAdmin
+      const { data: order, error } = await supabaseAdmin
         .from('orders')
         .update({ status: 'paid' })
         .eq('razorpay_order_id', razorpayOrderId)
-        .eq('status', 'pending'); // Ensure we only update pending orders
+        .eq('status', 'pending')
+        .select('*, profiles(email)')
+        .single();
 
-      if (error) {
+      if (error || !order) {
         console.error('Error updating order:', error);
         return NextResponse.json({ error: 'Database error' }, { status: 500 });
       }
       
       console.log(`Order ${razorpayOrderId} marked as paid via webhook.`);
+
+      // Send Email Notification
+      const resendApiKey = process.env.RESEND_API_KEY;
+      if (resendApiKey) {
+        try {
+          const resend = new Resend(resendApiKey);
+          const email = order.profiles?.email;
+          
+          if (email) {
+            await resend.emails.send({
+              from: 'Kaneera <onboarding@resend.dev>',
+              to: [email],
+              subject: 'Order Confirmation - Kaneera',
+              html: getOrderConfirmationEmail(order.id, order.total_amount, order.shipping_address)
+            });
+            console.log(`Order confirmation email sent to ${email}`);
+          }
+        } catch (emailError) {
+          console.error('Failed to send order confirmation email:', emailError);
+          // Don't fail the webhook if email fails
+        }
+      }
     }
 
     return NextResponse.json({ status: 'ok' });
