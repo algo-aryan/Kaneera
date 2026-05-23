@@ -29,7 +29,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
       try {
         const resend = new Resend(resendApiKey);
         await resend.emails.send({
-          from: 'Kaneera <onboarding@resend.dev>',
+          from: 'Kaneera <orders@kaneera.in>',
           to: [order.profiles.email],
           subject: 'Your Order has Shipped! - Kaneera',
           html: getOrderShippedEmail(orderId)

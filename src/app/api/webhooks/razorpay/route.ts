@@ -74,7 +74,7 @@ export async function POST(req: Request) {
           
           if (email) {
             await resend.emails.send({
-              from: 'Kaneera <onboarding@resend.dev>',
+              from: 'Kaneera <orders@kaneera.in>',
               to: [email],
               subject: 'Order Confirmation - Kaneera',
               html: getOrderConfirmationEmail(order.id, order.total_amount, order.shipping_address)
