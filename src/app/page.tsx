@@ -17,28 +17,28 @@ const categories = [
 
 const banners = [
   { 
-    image: "/banner_kriti_style.png", 
-    title: "KANEERA'S FAVOURITES", 
-    subtitle: "Aashi picked these. Your turn now.",
+    image: "/carousel_banner_1.png", 
+    title: "THE ART OF ELEGANCE", 
+    subtitle: "Discover our latest collection of premium jewelry.",
     button: "Shop Now",
     textColor: "text-charcoal",
-    bgHex: "#FFE8E2"
+    bgHex: "#FAF5F0"
   },
   { 
-    image: "/banner_strip_3.png", 
+    image: "/carousel_banner_2.png", 
+    title: "TIMELESS BEAUTY", 
+    subtitle: "Exquisite pieces that define sophistication.",
+    button: "Explore",
+    textColor: "text-charcoal",
+    bgHex: "#F8EFEA"
+  },
+  { 
+    image: "/carousel_banner_3.png", 
     title: "THE PERFECT GIFT", 
     subtitle: "Beautifully packaged. Unforgettable elegance.",
     button: "Gift Now",
     textColor: "text-charcoal",
-    bgHex: "#FAD9D7"
-  },
-  { 
-    image: "/banner_box_style.png", 
-    title: "FIRST ACCESS", 
-    subtitle: "New designs destined to become bestsellers.",
-    button: "Explore",
-    textColor: "text-white",
-    bgHex: "#4B101D"
+    bgHex: "#F5F0E6"
   }
 ];
 
@@ -80,7 +80,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Carousel */}
       <section 
-        className="relative w-full aspect-[4/5] sm:aspect-square md:aspect-[2/1] lg:aspect-[21/9] overflow-hidden group transition-colors duration-1000"
+        className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[3/1] lg:aspect-[4/1] overflow-hidden group transition-colors duration-1000"
         style={{ backgroundColor: banners[currentBanner].bgHex }}
       >
         <AnimatePresence mode="wait">
@@ -92,7 +92,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             src={banners[currentBanner].image} 
             alt="Kaneera Premium Jewelry"
-            className="w-full h-full object-cover object-[center_30%] absolute inset-0"
+            className="w-full h-full object-cover object-center absolute inset-0"
           />
         </AnimatePresence>
         
@@ -189,59 +189,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Luxury Within Reach (Pill Buttons) */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-[#F7D8C6] rounded-2xl py-6 px-4 md:px-8 shadow-sm relative overflow-hidden">
-            {/* Title */}
-            <div className="text-center mb-6 relative z-10">
-              <h2 className="text-white text-2xl md:text-3xl font-medium tracking-wide">Luxury Within Reach</h2>
-            </div>
-            
-            <div className="flex flex-col md:flex-row justify-center items-center gap-4 relative z-10">
-              <Link href="/category/all?maxPrice=1499" className="w-full md:w-1/3">
-                <div className="bg-gradient-to-r from-[#FEF2F6] to-[#FDE8EF] rounded-full py-4 text-center shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 group cursor-pointer border border-[#FDE8EF]">
-                  <span className="font-medium text-[#902A46] text-base md:text-lg">Under ₹1499</span>
-                </div>
-              </Link>
-              <Link href="/category/all?maxPrice=1999" className="w-full md:w-1/3">
-                <div className="bg-gradient-to-r from-[#FEF2F6] to-[#FDE8EF] rounded-full py-4 text-center shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 group cursor-pointer border border-[#FDE8EF]">
-                  <span className="font-medium text-[#902A46] text-base md:text-lg">Under ₹1999</span>
-                </div>
-              </Link>
-              <Link href="/category/all" className="w-full md:w-1/3">
-                <div className="bg-gradient-to-r from-[#FEF4DA] to-[#FBE7BA] rounded-full py-4 text-center shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 group cursor-pointer border border-[#FBE7BA]">
-                  <span className="font-medium text-[#902A46] text-base md:text-lg">Premium Gifts</span>
-                </div>
-              </Link>
-            </div>
-          </div>
+      {/* Luxury Within Reach (Full Width) */}
+      <section className="py-16 md:py-24 bg-[#F7D8C6] border-y border-[#F3C2A9] relative overflow-hidden">
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[150%] rounded-full bg-white/40 blur-3xl transform rotate-12"></div>
+          <div className="absolute top-[30%] -right-[10%] w-[40%] h-[120%] rounded-full bg-white/30 blur-3xl transform -rotate-12"></div>
         </div>
-      </section>
 
-      {/* First Access Banner */}
-      <section className="py-4 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <Link href="/category/all">
-            <div className="w-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer">
-              <img 
-                src="/banner_first_access.png" 
-                alt="First Access to what's new!" 
-                className="w-full h-auto object-cover"
-              />
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* Shop by Bond - Realistic Lifestyle Grid */}
-      <section className="py-16 md:py-20 bg-[#FDFBF7]">
-        <div className="container mx-auto px-4 sm:px-8">
-          <div className="text-center mb-10 md:mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-medium text-charcoal">Shop by Recipient</h2>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="w-full text-center mb-10">
+            <h2 className="text-charcoal text-3xl md:text-5xl font-serif font-medium tracking-wide">Luxury Within Reach</h2>
+            <p className="text-gray-800 mt-3 font-light text-lg">Curated collections of premium jewelry, thoughtfully priced.</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-6 max-w-5xl mx-auto">
+            <Link href="/category/all?maxPrice=1499" className="w-full md:w-1/3">
+              <div className="bg-white/80 backdrop-blur-sm rounded-full py-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 group cursor-pointer border border-white">
+                <span className="font-medium text-[#902A46] text-lg md:text-xl tracking-wide group-hover:text-charcoal transition-colors">Under ₹1499</span>
+              </div>
+            </Link>
+            <Link href="/category/all?maxPrice=1999" className="w-full md:w-1/3">
+              <div className="bg-white/80 backdrop-blur-sm rounded-full py-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 group cursor-pointer border border-white">
+                <span className="font-medium text-[#902A46] text-lg md:text-xl tracking-wide group-hover:text-charcoal transition-colors">Under ₹1999</span>
+              </div>
+            </Link>
+            <Link href="/category/all" className="w-full md:w-1/3">
+              <div className="bg-white/80 backdrop-blur-sm rounded-full py-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 group cursor-pointer border border-white">
+                <span className="font-medium text-[#902A46] text-lg md:text-xl tracking-wide group-hover:text-charcoal transition-colors">Premium Gifts</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* First Access Banner (Full Width) */}
+      <section className="bg-[#0f0f0f] w-full">
+        <Link href="/category/all" className="block relative group w-full">
+          <div className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[3/1] lg:aspect-[4/1] overflow-hidden">
+            <img 
+              src="/first_access_banner_new.png" 
+              alt="First Access - Explore the New Collection" 
+              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+            />
+          </div>
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 pointer-events-none"></div>
+        </Link>
+      </section>
+
+      {/* Shop by Bond - Stylish Lifestyle Grid */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="container mx-auto px-4 sm:px-8">
+          <div className="text-center mb-16">
+            <h2 className="font-serif text-3xl md:text-5xl font-medium text-charcoal mb-4">Shop by Recipient</h2>
+            <p className="text-gray-500 font-light text-lg">Perfectly crafted pieces to celebrate the ones you love.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
             {[
               { title: "Wife", img: "/bond_wife_1779595089303.png", query: "wife" },
               { title: "Mother", img: "/bond_mother_real.png", query: "mother" },
@@ -249,15 +253,17 @@ export default function Home() {
               { title: "Friends", img: "/bond_friends_1779595135834.png", query: "friends" }
             ].map((bond, idx) => (
               <Link href={`/category/all?recipient=${bond.query}`} key={idx} className="group flex flex-col items-center">
-                <div className="w-full aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden mb-3 bg-slate-100 shadow-sm group-hover:shadow-lg transition-shadow duration-300">
+                <div className="w-full aspect-[3/4] md:aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden mb-5 bg-slate-50 shadow-sm border border-slate-100 group-hover:shadow-xl transition-all duration-500 relative">
+                   <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500 z-10 pointer-events-none"></div>
                    <img 
                       src={bond.img} 
                       alt={`Gifts for ${bond.title}`} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                 </div>
-                <div className="w-full text-center mt-2">
-                  <h3 className="text-charcoal font-medium text-lg">{bond.title}</h3>
+                <div className="w-full text-center mt-1">
+                  <h3 className="text-charcoal font-medium text-xl uppercase tracking-widest">{bond.title}</h3>
+                  <div className="w-8 h-[2px] bg-[#D4AF37] mx-auto mt-3 transition-all duration-300 group-hover:w-16"></div>
                 </div>
               </Link>
             ))}
