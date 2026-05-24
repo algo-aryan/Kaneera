@@ -76,6 +76,30 @@ export default function AddProductModal({ categories }: { categories: any[] }) {
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Recipient</label>
+                  <select name="recipient" className="w-full border border-charcoal/20 bg-transparent px-4 py-2 text-sm focus:border-rose-gold focus:outline-none rounded">
+                    <option value="">Any</option>
+                    <option value="Mother">Mother</option>
+                    <option value="Sister">Sister</option>
+                    <option value="Wife">Wife</option>
+                    <option value="Friends">Friends</option>
+                    <option value="Husband">Husband</option>
+                    <option value="Brother">Brother</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Material Color</label>
+                  <select name="material_color" className="w-full border border-charcoal/20 bg-transparent px-4 py-2 text-sm focus:border-rose-gold focus:outline-none rounded">
+                    <option value="">Any</option>
+                    <option value="Rose Gold">Rose Gold</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Gold">Gold</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-2">Product Images</label>
                 <div className="space-y-3">

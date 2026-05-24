@@ -10,8 +10,8 @@ const categories = [
   { name: "Bracelets", slug: "bracelets", image: "/category_rings_1779508804127.png" },
   { name: "Pendants", slug: "necklaces", image: "/category_earrings_1779508818040.png" },
   { name: "Earrings", slug: "earrings", image: "/category_earrings_1779508818040.png" },
-  { name: "Sets", slug: "all", image: "/category_rings_1779508804127.png" },
-  { name: "Anklets", slug: "all", image: "/category_earrings_1779508818040.png" },
+  { name: "Sets", slug: "sets", image: "/category_rings_1779508804127.png" },
+  { name: "Anklets", slug: "anklets", image: "/category_earrings_1779508818040.png" },
 ];
 
 const banners = [
@@ -20,14 +20,24 @@ const banners = [
     title: "KANEERA'S FAVOURITES", 
     subtitle: "Aashi picked these. Your turn now.",
     button: "Shop Now",
-    textColor: "text-charcoal"
+    textColor: "text-charcoal",
+    bg: "bg-[#FFE8E2]"
+  },
+  { 
+    image: "/banner_strip_3.png", 
+    title: "THE PERFECT GIFT", 
+    subtitle: "Beautifully packaged. Unforgettable elegance.",
+    button: "Gift Now",
+    textColor: "text-charcoal",
+    bg: "bg-[#FAD9D7]"
   },
   { 
     image: "/banner_box_style.png", 
     title: "FIRST ACCESS", 
     subtitle: "New designs destined to become bestsellers.",
     button: "Explore",
-    textColor: "text-white"
+    textColor: "text-white",
+    bg: "bg-[#4B101D]"
   }
 ];
 
@@ -37,7 +47,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
@@ -57,7 +67,8 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Ultra-Thin Hero Carousel (Strip Format) */}
-      <section className="relative w-full h-[250px] md:h-[350px] lg:h-[400px] bg-[#FFF8F8] overflow-hidden group">
+      {/* We use aspect ratio to prevent cutting, and object-contain on mobile to ensure it's fully visible */}
+      <section className={`relative w-full aspect-[4/3] md:aspect-[3/1] lg:aspect-[4/1] ${banners[currentBanner].bg} overflow-hidden group transition-colors duration-1000`}>
         <AnimatePresence mode="wait">
           <motion.img 
             key={currentBanner}
@@ -67,7 +78,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             src={banners[currentBanner].image} 
             alt="Kaneera Premium Jewelry"
-            className="w-full h-full object-cover object-center absolute inset-0"
+            className="w-full h-full object-cover md:object-contain object-center absolute inset-0"
           />
         </AnimatePresence>
         
@@ -80,17 +91,17 @@ export default function Home() {
               animate="visible"
               exit="hidden"
               variants={staggerContainer}
-              className={`text-center pointer-events-auto ${banners[currentBanner].textColor}`}
+              className={`text-center pointer-events-auto ${banners[currentBanner].textColor} drop-shadow-md`}
             >
-              <motion.h1 variants={fadeInUp} className="font-serif text-3xl md:text-5xl lg:text-6xl tracking-wide mb-2 md:mb-4">
+              <motion.h1 variants={fadeInUp} className="font-serif text-2xl md:text-4xl lg:text-5xl tracking-wide mb-2 md:mb-4 whitespace-nowrap">
                 {banners[currentBanner].title}
               </motion.h1>
-              <motion.p variants={fadeInUp} className="text-sm md:text-xl font-light mb-4 md:mb-6">
+              <motion.p variants={fadeInUp} className="text-xs md:text-lg font-light mb-4 md:mb-6">
                 {banners[currentBanner].subtitle}
               </motion.p>
               <motion.div variants={fadeInUp}>
                 <Link href="/category/all">
-                  <Button className="px-6 md:px-10 py-4 md:py-6 text-xs md:text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] rounded-full shadow-lg transition-transform hover:-translate-y-1 border-none">
+                  <Button className="px-5 md:px-8 py-3 md:py-6 text-[10px] md:text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] rounded-full shadow-lg transition-transform hover:-translate-y-1 border-none">
                     {banners[currentBanner].button}
                   </Button>
                 </Link>
@@ -105,7 +116,7 @@ export default function Home() {
             <button 
               key={idx}
               onClick={() => setCurrentBanner(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBanner ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-gray-300 hover:bg-gray-400'}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBanner ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-white/50 hover:bg-white'}`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
@@ -145,14 +156,14 @@ export default function Home() {
       <section className="py-8 bg-white border-t border-slate-100">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 max-w-4xl mx-auto">
-            <Link href="/category/all" className="w-full md:w-1/3">
+            <Link href="/category/under-399" className="w-full md:w-1/3">
               <div className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE4E4] rounded-full py-4 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF0F0]">
-                <span className="font-medium text-charcoal text-base md:text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹1499</span>
+                <span className="font-medium text-charcoal text-base md:text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹399</span>
               </div>
             </Link>
-            <Link href="/category/all" className="w-full md:w-1/3">
+            <Link href="/category/under-799" className="w-full md:w-1/3">
               <div className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE4E4] rounded-full py-4 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF0F0]">
-                <span className="font-medium text-charcoal text-base md:text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹1999</span>
+                <span className="font-medium text-charcoal text-base md:text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹799</span>
               </div>
             </Link>
             <Link href="/category/all" className="w-full md:w-1/3">

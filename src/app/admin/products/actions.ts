@@ -13,6 +13,9 @@ export async function addProduct(formData: FormData) {
   const price = parseFloat(formData.get('price') as string);
   const categoryId = formData.get('categoryId') as string;
   const imageUrlsString = formData.get('imageUrls') as string;
+  
+  const recipient = formData.get('recipient') as string;
+  const material_color = formData.get('material_color') as string;
 
   if (!name || !price || !categoryId || !imageUrlsString) {
     throw new Error("Missing required fields");
@@ -32,6 +35,8 @@ export async function addProduct(formData: FormData) {
       price,
       category_id: categoryId,
       image_urls: imageUrls,
+      recipient,
+      material_color,
       is_active: true
     });
 
@@ -55,6 +60,9 @@ export async function editProduct(id: string, formData: FormData) {
   const price = parseFloat(formData.get('price') as string);
   const categoryId = formData.get('categoryId') as string;
   const imageUrlsString = formData.get('imageUrls') as string;
+  
+  const recipient = formData.get('recipient') as string;
+  const material_color = formData.get('material_color') as string;
 
   if (!name || !price || !categoryId || !imageUrlsString) {
     throw new Error("Missing required fields");
@@ -73,7 +81,9 @@ export async function editProduct(id: string, formData: FormData) {
       description,
       price,
       category_id: categoryId,
-      image_urls: imageUrls
+      image_urls: imageUrls,
+      recipient,
+      material_color
     })
     .eq('id', id);
 
