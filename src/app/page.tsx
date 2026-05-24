@@ -4,7 +4,26 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Minus } from "lucide-react";
+
+const faqs = [
+  {
+    question: "What materials are used in your jewelry?",
+    answer: "Our pieces are meticulously crafted with premium materials, including 18k gold plating, sterling silver, and ethically sourced cubic zirconia, designed for timeless elegance and durability."
+  },
+  {
+    question: "How should I care for my jewelry?",
+    answer: "To maintain the brilliance of your Kaneera pieces, avoid contact with water, perfumes, and harsh chemicals. Store them in the provided luxury box when not in use."
+  },
+  {
+    question: "Do you offer custom or personalized designs?",
+    answer: "Currently, we offer curated, limited-edition collections. We do not take custom orders, but our pieces are carefully designed to make perfect, memorable gifts for your loved ones."
+  },
+  {
+    question: "What is your shipping timeline?",
+    answer: "Orders are typically processed within 24-48 hours and delivered within 3-5 business days across India. All orders come in our signature premium packaging."
+  }
+];
 
 const categories = [
   { name: "Rings", slug: "rings", image: "/category_rings_1779508804127.png" },
@@ -17,33 +36,34 @@ const categories = [
 
 const banners = [
   { 
-    image: "/wide_banner_1.png", 
-    title: "THE ART OF ELEGANCE", 
-    subtitle: "Discover our latest collection of premium jewelry.",
-    button: "Shop Now",
-    textColor: "text-charcoal",
-    bgHex: "#FAF5F0"
+    image: "/new_carousel_1.png", 
+    title: "ETHEREAL GLOW", 
+    subtitle: "Minimalist designs for everyday sophistication.",
+    button: "Shop The Look",
+    textColor: "text-[#4A3B32]",
+    bgHex: "#F6F1EA"
   },
   { 
-    image: "/wide_banner_2.png", 
-    title: "TIMELESS BEAUTY", 
-    subtitle: "Exquisite pieces that define sophistication.",
-    button: "Explore",
-    textColor: "text-charcoal",
-    bgHex: "#F8EFEA"
+    image: "/new_carousel_2.png", 
+    title: "REGAL RADIANCE", 
+    subtitle: "Statement pieces crafted for unforgettable moments.",
+    button: "Explore Collection",
+    textColor: "text-[#2A1E22]",
+    bgHex: "#F2EDE4"
   },
   { 
-    image: "/wide_banner_3.png", 
-    title: "THE PERFECT GIFT", 
-    subtitle: "Beautifully packaged. Unforgettable elegance.",
-    button: "Gift Now",
-    textColor: "text-charcoal",
-    bgHex: "#F5F0E6"
+    image: "/new_carousel_3.png", 
+    title: "MODERN HEIRLOOMS", 
+    subtitle: "Timeless jewelry that shines with your unique light.",
+    button: "Discover More",
+    textColor: "text-[#3D2C2A]",
+    bgHex: "#EAE6DF"
   }
 ];
 
 export default function Home() {
   const [currentBanner, setCurrentBanner] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
   const scrollCategories = (direction: 'left' | 'right') => {
@@ -190,33 +210,33 @@ export default function Home() {
       </section>
 
       {/* Luxury Within Reach (Full Width) */}
-      <section className="py-16 md:py-24 bg-[#F7D8C6] border-y border-[#F3C2A9] relative overflow-hidden">
+      <section className="py-16 md:py-24 bg-gradient-to-br from-[#FDE8EF] via-[#FDF8F5] to-[#E8E2D2] border-y border-[#F3C2A9] relative overflow-hidden">
         {/* Subtle background decoration */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
-          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[150%] rounded-full bg-white/40 blur-3xl transform rotate-12"></div>
-          <div className="absolute top-[30%] -right-[10%] w-[40%] h-[120%] rounded-full bg-white/30 blur-3xl transform -rotate-12"></div>
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 pointer-events-none">
+          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[150%] rounded-full bg-white/60 blur-3xl transform rotate-12"></div>
+          <div className="absolute top-[30%] -right-[10%] w-[40%] h-[120%] rounded-full bg-white/50 blur-3xl transform -rotate-12"></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="w-full text-center mb-10">
-            <h2 className="text-charcoal text-3xl md:text-5xl font-serif font-medium tracking-wide">Luxury Within Reach</h2>
-            <p className="text-gray-800 mt-3 font-light text-lg">Curated collections of premium jewelry, thoughtfully priced.</p>
+          <div className="w-full text-center mb-12">
+            <h2 className="text-[#902A46] text-4xl md:text-6xl font-serif italic font-medium tracking-wide drop-shadow-sm">Luxury Within Reach</h2>
+            <p className="text-gray-700 mt-4 font-light text-lg">Curated collections of premium jewelry, thoughtfully priced.</p>
           </div>
           
-          <div className="flex flex-col md:flex-row justify-center items-center gap-6 max-w-5xl mx-auto">
-            <Link href="/category/all?maxPrice=1499" className="w-full md:w-1/3">
-              <div className="bg-white/80 backdrop-blur-sm rounded-full py-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 group cursor-pointer border border-white">
-                <span className="font-medium text-[#902A46] text-lg md:text-xl tracking-wide group-hover:text-charcoal transition-colors">Under ₹1499</span>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-6 max-w-6xl mx-auto">
+            <Link href="/category/under-399" className="w-full md:w-1/3">
+              <div className="bg-gradient-to-r from-[#D78B9B] to-[#C97284] rounded-full py-5 text-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 group cursor-pointer border-2 border-white/50">
+                <span className="font-medium text-white text-lg md:text-xl tracking-wide">Under ₹399</span>
               </div>
             </Link>
-            <Link href="/category/all?maxPrice=1999" className="w-full md:w-1/3">
-              <div className="bg-white/80 backdrop-blur-sm rounded-full py-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 group cursor-pointer border border-white">
-                <span className="font-medium text-[#902A46] text-lg md:text-xl tracking-wide group-hover:text-charcoal transition-colors">Under ₹1999</span>
+            <Link href="/category/under-799" className="w-full md:w-1/3">
+              <div className="bg-gradient-to-r from-[#D4AF37] to-[#C19B2E] rounded-full py-5 text-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 group cursor-pointer border-2 border-white/50">
+                <span className="font-medium text-white text-lg md:text-xl tracking-wide">Under ₹799</span>
               </div>
             </Link>
             <Link href="/category/all" className="w-full md:w-1/3">
-              <div className="bg-white/80 backdrop-blur-sm rounded-full py-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 group cursor-pointer border border-white">
-                <span className="font-medium text-[#902A46] text-lg md:text-xl tracking-wide group-hover:text-charcoal transition-colors">Premium Gifts</span>
+              <div className="bg-gradient-to-r from-[#8C9AA9] to-[#718093] rounded-full py-5 text-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 group cursor-pointer border-2 border-white/50">
+                <span className="font-medium text-white text-lg md:text-xl tracking-wide">All Collections</span>
               </div>
             </Link>
           </div>
@@ -238,11 +258,11 @@ export default function Home() {
       </section>
 
       {/* Shop by Bond - Stylish Lifestyle Grid */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-20 md:py-28 bg-gradient-to-b from-[#F2EFE9] to-[#EAE6DE]">
         <div className="container mx-auto px-4 sm:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-serif text-3xl md:text-5xl font-medium text-charcoal mb-4">Shop by Recipient</h2>
-            <p className="text-gray-500 font-light text-lg">Perfectly crafted pieces to celebrate the ones you love.</p>
+            <h2 className="font-serif italic text-4xl md:text-6xl font-medium text-charcoal mb-4 drop-shadow-sm">Shop by Recipient</h2>
+            <p className="text-gray-600 font-light text-lg">Perfectly crafted pieces to celebrate the ones you love.</p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
@@ -266,6 +286,50 @@ export default function Home() {
                   <div className="w-8 h-[2px] bg-[#D4AF37] mx-auto mt-3 transition-all duration-300 group-hover:w-16"></div>
                 </div>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* FAQ Section (End to End) */}
+      <section className="py-24 bg-gradient-to-r from-[#FFF0F5] to-[#FBE8EF]">
+        <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row gap-12 items-start">
+          <div className="w-full md:w-1/3 sticky top-24">
+            <h2 className="font-serif italic text-4xl md:text-5xl font-medium text-[#902A46] mb-4">Questions? <br/>We have answers.</h2>
+            <p className="text-gray-600 font-light mb-8">Everything you need to know about Kaneera's premium jewelry, shipping, and care.</p>
+            <div className="w-16 h-[2px] bg-[#D4AF37]"></div>
+          </div>
+          
+          <div className="w-full md:w-2/3 space-y-2 bg-white/60 backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-sm border border-white">
+            {faqs.map((faq, index) => (
+              <div 
+                key={index} 
+                className="border-b border-[#902A46]/10 pb-4 last:border-0 last:pb-0"
+              >
+                <button 
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  className="w-full flex justify-between items-center text-left py-4 group"
+                >
+                  <span className="font-medium text-lg text-charcoal group-hover:text-[#902A46] transition-colors">{faq.question}</span>
+                  <div className="text-[#902A46]/60 group-hover:text-[#902A46] transition-colors ml-4 flex-shrink-0 bg-white p-2 rounded-full shadow-sm">
+                    {openFaq === index ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {openFaq === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="pb-4 text-gray-600 font-light leading-relaxed pr-8">
+                        {faq.answer}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             ))}
           </div>
         </div>

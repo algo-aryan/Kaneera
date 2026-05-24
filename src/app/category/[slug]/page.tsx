@@ -4,7 +4,13 @@ import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const title = slug === 'all' ? 'All Collections' : slug.charAt(0).toUpperCase() + slug.slice(1);
+  
+  let title = 'All Collections';
+  if (slug.startsWith('under-')) {
+    title = `Under ₹${slug.split('-')[1]}`;
+  } else if (slug !== 'all') {
+    title = slug.charAt(0).toUpperCase() + slug.slice(1);
+  }
   
   return {
     title: title,
@@ -32,16 +38,26 @@ export default async function CategoryPage({
   const { slug } = await params;
   const sParams = await searchParams;
   
-  const title = slug === 'all' ? 'All Collections' : slug.charAt(0).toUpperCase() + slug.slice(1);
+  let title = 'All Collections';
+  let isUnderSlug = false;
+  let slugMaxPrice: number | undefined = undefined;
+
+  if (slug.startsWith('under-')) {
+    isUnderSlug = true;
+    slugMaxPrice = parseInt(slug.split('-')[1]);
+    title = `Under ₹${slugMaxPrice}`;
+  } else if (slug !== 'all') {
+    title = slug.charAt(0).toUpperCase() + slug.slice(1);
+  }
   
   const supabase = await createClient();
   let query = supabase.from('products').select(`*, categories!inner(slug)`).eq('is_active', true);
   
-  if (slug !== 'all') {
+  if (slug !== 'all' && !isUnderSlug) {
     query = query.eq('categories.slug', slug);
   }
   
-  const maxPrice = sParams.maxPrice ? parseFloat(sParams.maxPrice as string) : undefined;
+  const maxPrice = slugMaxPrice || (sParams.maxPrice ? parseFloat(sParams.maxPrice as string) : undefined);
   if (maxPrice) {
     query = query.lte('price', maxPrice);
   }
