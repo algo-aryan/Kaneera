@@ -63,7 +63,28 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
 
   useEffect(() => {
     setMounted(true);
+    // Restore state if browser refreshes (e.g. returning from UPI app)
+    const savedState = sessionStorage.getItem('kaneera_checkout_state');
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState);
+        if (parsed.step) setStep(parsed.step);
+        if (parsed.finalAddressStr) setFinalAddressStr(parsed.finalAddressStr);
+        if (parsed.address) setAddress(parsed.address);
+        if (parsed.city) setCity(parsed.city);
+        if (parsed.state) setState(parsed.state);
+        if (parsed.pincode) setPincode(parsed.pincode);
+        if (parsed.selectedAddress) setSelectedAddress(parsed.selectedAddress);
+      } catch (e) {}
+    }
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    sessionStorage.setItem('kaneera_checkout_state', JSON.stringify({
+      step, finalAddressStr, address, city, state, pincode, selectedAddress
+    }));
+  }, [step, finalAddressStr, address, city, state, pincode, selectedAddress, mounted]);
 
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
