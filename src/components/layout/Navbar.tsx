@@ -25,81 +25,131 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
     return null;
   }
 
+  const announcements = [
+    "Free Shipping Over ₹799",
+    "Use Code WELCOME20 for 20% Off",
+    "Fast Pan-India Delivery"
+  ];
+  const [announcementIndex, setAnnouncementIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnnouncementIndex((prev) => (prev + 1) % announcements.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-cream/90 backdrop-blur-md border-b border-rose-gold/20">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-white flex flex-col shadow-sm">
+      {/* Top Announcement Bar */}
+      <div className="w-full bg-[#FFECEC] text-charcoal py-2 text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-center overflow-hidden transition-all duration-500">
+        <p key={announcementIndex} className="animate-fade-in">
+          {announcements[announcementIndex]}
+        </p>
+      </div>
+
+      {/* Main Navbar */}
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4 sm:gap-8">
         {/* Logo */}
-        <Link href="/" className="flex-1 md:flex-none text-center md:text-left">
-          <span className="font-serif text-2xl font-bold tracking-wider text-charcoal">
+        <Link href="/" className="flex-shrink-0 flex items-center space-x-1">
+          <span className="font-serif text-3xl font-bold tracking-widest text-charcoal">
             KANEERA
-          </span>
-          <span className="block text-[10px] uppercase tracking-widest text-slate -mt-1">
-            by Aashi
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link href="/category/rings" className="text-sm font-medium text-slate hover:text-rose-gold transition-colors">RINGS</Link>
-          <Link href="/category/earrings" className="text-sm font-medium text-slate hover:text-rose-gold transition-colors">EARRINGS</Link>
-          <Link href="/category/necklaces" className="text-sm font-medium text-slate hover:text-rose-gold transition-colors">NECKLACES</Link>
-          <Link href="/category/bracelets" className="text-sm font-medium text-slate hover:text-rose-gold transition-colors">BRACELETS</Link>
-        </nav>
+        {/* Search Bar (Centered) */}
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const q = new FormData(e.currentTarget).get('q');
+            if (q) router.push(`/search?q=${encodeURIComponent(q.toString())}`);
+          }}
+          className="hidden md:flex flex-1 max-w-xl items-center relative"
+        >
+          <input 
+            name="q"
+            type="text" 
+            placeholder="Search for Jewellery..." 
+            className="w-full bg-white border border-slate-200 rounded-full pl-4 pr-10 py-2.5 text-sm text-charcoal focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all placeholder:text-slate-400"
+          />
+          <button type="submit" className="absolute right-3 p-1 text-slate hover:text-[#D4AF37] transition-colors">
+            <Search className="w-4 h-4" />
+          </button>
+        </form>
 
-        {/* Icons */}
-        <div className="flex items-center space-x-4">
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              const q = new FormData(e.currentTarget).get('q');
-              if (q) router.push(`/search?q=${encodeURIComponent(q.toString())}`);
-            }}
-            className="hidden sm:flex items-center relative"
-          >
-            <input 
-              name="q"
-              type="text" 
-              placeholder="Search..." 
-              className="w-32 lg:w-48 bg-transparent border-b border-charcoal/20 px-2 py-1 text-sm text-charcoal focus:outline-none focus:border-rose-gold transition-colors placeholder:text-slate-400"
-            />
-            <button type="submit" className="absolute right-0 p-1 text-charcoal hover:text-rose-gold transition-colors">
-              <Search className="w-4 h-4" />
-            </button>
-          </form>
-          
+        {/* Icons (Right) */}
+        <div className="flex items-center space-x-6 flex-shrink-0">
           {mounted && serverUser ? (
-            <div className="hidden sm:flex items-center space-x-2 border-l border-charcoal/10 pl-4 ml-2">
-              <Link href="/account" className="text-xs font-semibold text-charcoal tracking-widest uppercase hover:text-rose-gold transition-colors">
-                Account
-              </Link>
-              <button 
-                onClick={async () => {
-                  await logout();
-                  window.location.href = '/login';
-                }} 
-                className="text-xs font-medium text-slate tracking-widest uppercase hover:text-rose-gold transition-colors ml-4"
-              >
-                Logout
-              </button>
-            </div>
+            <Link href="/account" className="hidden sm:flex flex-col items-center group">
+              <User className="w-5 h-5 text-charcoal group-hover:text-[#D4AF37] transition-colors" />
+              <span className="text-[9px] uppercase tracking-wider font-semibold text-charcoal mt-1 group-hover:text-[#D4AF37] transition-colors">Account</span>
+            </Link>
           ) : (
-            <Link href="/login" className="p-2 text-charcoal hover:text-rose-gold transition-colors hidden sm:block">
-              <User className="w-5 h-5" />
+            <Link href="/login" className="hidden sm:flex flex-col items-center group">
+              <User className="w-5 h-5 text-charcoal group-hover:text-[#D4AF37] transition-colors" />
+              <span className="text-[9px] uppercase tracking-wider font-semibold text-charcoal mt-1 group-hover:text-[#D4AF37] transition-colors">Login</span>
             </Link>
           )}
 
           <button 
             onClick={toggleCart}
-            className="p-2 text-charcoal hover:text-rose-gold transition-colors relative"
+            className="flex flex-col items-center group relative"
           >
-            <ShoppingBag className="w-5 h-5" />
+            <ShoppingBag className="w-5 h-5 text-charcoal group-hover:text-[#D4AF37] transition-colors" />
+            <span className="text-[9px] uppercase tracking-wider font-semibold text-charcoal mt-1 group-hover:text-[#D4AF37] transition-colors">Cart</span>
             {mounted && totalItems > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-rose-gold text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+              <span className="absolute -top-1 right-0 w-4 h-4 bg-[#D4AF37] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
                 {totalItems}
               </span>
             )}
           </button>
         </div>
+      </div>
+
+      {/* Sub Navbar (Categories) */}
+      <div className="hidden md:flex justify-center items-center space-x-10 h-12 bg-white border-t border-slate-100 border-b border-slate-100">
+        <Link href="/category/all" className="text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors relative group">
+          Shop by Category
+          <div className="absolute -bottom-3.5 left-0 w-full h-[2px] bg-[#D4AF37] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+        </Link>
+        <Link href="/category/rings" className="text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors relative group">
+          Rings
+          <div className="absolute -bottom-3.5 left-0 w-full h-[2px] bg-[#D4AF37] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+        </Link>
+        <Link href="/category/earrings" className="text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors relative group">
+          Earrings
+          <div className="absolute -bottom-3.5 left-0 w-full h-[2px] bg-[#D4AF37] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+        </Link>
+        <Link href="/category/bracelets" className="text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors relative group">
+          Bracelets
+          <div className="absolute -bottom-3.5 left-0 w-full h-[2px] bg-[#D4AF37] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+        </Link>
+        <Link href="/category/pendants" className="text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors relative group">
+          Pendants
+          <div className="absolute -bottom-3.5 left-0 w-full h-[2px] bg-[#D4AF37] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+        </Link>
+      </div>
+
+      {/* Mobile Search Bar (Only visible on small screens) */}
+      <div className="md:hidden px-4 pb-3">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const q = new FormData(e.currentTarget).get('q');
+            if (q) router.push(`/search?q=${encodeURIComponent(q.toString())}`);
+          }}
+          className="flex flex-1 items-center relative"
+        >
+          <input 
+            name="q"
+            type="text" 
+            placeholder="Search for Jewellery..." 
+            className="w-full bg-slate-50 border border-slate-200 rounded-full pl-4 pr-10 py-2 text-sm text-charcoal focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+          />
+          <button type="submit" className="absolute right-3 p-1 text-slate hover:text-[#D4AF37] transition-colors">
+            <Search className="w-4 h-4" />
+          </button>
+        </form>
       </div>
     </header>
   );

@@ -27,43 +27,38 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-cream">
+    <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative w-full overflow-hidden flex items-end md:items-center justify-center bg-cream pb-20 md:pb-0" style={{ height: '90vh' }}>
-        <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className="absolute inset-0 w-full h-full flex justify-end items-end"
-        >
-          {/* Using textless beautiful lady cut-out image */}
-          <img 
-            src="/hero_banner_no_text.png" 
-            alt="Kaneera Premium Jewelry"
-            className="w-full md:w-3/4 h-full object-cover object-top mix-blend-multiply opacity-95"
-          />
-        </motion.div>
-        
-        <div className="container mx-auto px-4 sm:px-8 relative z-10 flex flex-col items-start w-full">
+      <section className="relative w-full h-[60vh] md:h-[85vh] bg-[#FFF8F8] overflow-hidden flex items-center justify-center">
+        <motion.img 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          src="/hero_banner_giva_1779595073285.png" 
+          alt="Kaneera Premium Jewelry"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* Soft text overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8F8]/80 to-transparent flex items-center justify-start px-8 md:px-24">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            className="max-w-2xl bg-cream/30 p-8 md:p-12 backdrop-blur-sm shadow-xl rounded-md border border-white/50"
+            className="max-w-xl"
           >
-            <motion.span variants={fadeInUp} className="text-rose-gold font-sans font-semibold tracking-[0.2em] uppercase text-xs md:text-sm mb-6 block drop-shadow-sm">
-              The Kaneera Signature
+            <motion.span variants={fadeInUp} className="text-[#D4AF37] font-sans font-semibold tracking-widest uppercase text-xs md:text-sm mb-4 block">
+              The New Standard
             </motion.span>
             <motion.h1 variants={fadeInUp} className="font-serif text-5xl md:text-7xl font-bold text-charcoal leading-[1.1] mb-6">
-              Radiance <br/> <span className="text-rose-gold italic font-light">Redefined.</span>
+              Everyday <br/> <span className="text-[#D4AF37] italic font-light">Elegance.</span>
             </motion.h1>
-            <motion.p variants={fadeInUp} className="text-lg md:text-xl text-slate mb-10 max-w-lg font-light leading-relaxed">
-              Immerse yourself in a world of exquisite craftsmanship. Fine jewelry designed to elevate your everyday elegance.
+            <motion.p variants={fadeInUp} className="text-lg text-slate mb-8 max-w-md font-light leading-relaxed">
+              Fine silver jewelry designed to elevate your everyday moments.
             </motion.p>
-            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={fadeInUp}>
               <Link href="/category/all">
-                <Button size="lg" className="w-full sm:w-auto px-10 py-6 text-sm tracking-widest uppercase bg-charcoal text-white hover:bg-rose-gold transition-all duration-500 rounded-none shadow-md">
-                  Explore Collection
+                <Button size="lg" className="px-10 py-6 text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] shadow-[0_8px_30px_rgb(212,175,55,0.25)] hover:shadow-[0_8px_30px_rgb(212,175,55,0.4)] transition-all duration-300 rounded-full transform hover:-translate-y-1">
+                  Shop Now
                 </Button>
               </Link>
             </motion.div>
@@ -71,69 +66,60 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Aesthetic Marquee / Trust Strip */}
-      <div className="bg-charcoal text-rose-gold py-4 overflow-hidden border-y border-rose-gold/20">
-        <motion.div 
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="flex whitespace-nowrap space-x-12 items-center"
-        >
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-             <div key={i} className="flex items-center space-x-12 font-serif italic text-lg">
-               <span>100% Authentic Quality</span>
-               <span className="text-white/20">✧</span>
-               <span>Free Shipping Over ₹999</span>
-               <span className="text-white/20">✧</span>
-               <span>30-Day Easy Returns</span>
-               <span className="text-white/20">✧</span>
-             </div>
-          ))}
-        </motion.div>
-      </div>
+      {/* Luxury Within Reach (Pill Buttons) */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="font-serif text-3xl md:text-4xl font-medium text-center text-charcoal mb-10">Luxury Within Reach</h2>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-6 max-w-4xl mx-auto">
+            <Link href="/category/all" className="w-full md:w-1/3">
+              <div className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE4E4] rounded-full py-5 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF0F0]">
+                <span className="font-medium text-charcoal text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹1499</span>
+              </div>
+            </Link>
+            <Link href="/category/all" className="w-full md:w-1/3">
+              <div className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE4E4] rounded-full py-5 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF0F0]">
+                <span className="font-medium text-charcoal text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹1999</span>
+              </div>
+            </Link>
+            <Link href="/category/all" className="w-full md:w-1/3">
+              <div className="bg-gradient-to-r from-[#FFF9E6] to-[#FFF4CC] rounded-full py-5 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF9E6]">
+                <span className="font-medium text-charcoal text-lg group-hover:text-[#D4AF37] transition-colors">Premium Gifts</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      {/* Shop by Category - Magazine Layout */}
-      <section className="py-24 md:py-32 bg-cream">
+      {/* Shop by Category - Clean GIVA style */}
+      <section className="py-16 bg-[#FDFBF7]">
         <div className="container mx-auto px-4 sm:px-8">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
-            className="text-center mb-20"
-          >
-            <span className="text-rose-gold tracking-[0.2em] uppercase text-xs font-semibold">Discover</span>
-            <h2 className="font-serif text-4xl md:text-6xl font-bold text-charcoal mt-4">Shop by Category</h2>
-          </motion.div>
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-medium text-charcoal">Shop by Category</h2>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {categories.map((category, index) => (
               <motion.div
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
                 key={category.slug}
+                className="flex flex-col items-center group"
               >
-                <Link 
-                  href={`/category/${category.slug}`}
-                  className="group block relative overflow-hidden"
-                  style={{ aspectRatio: '3/4' }}
-                >
-                  <motion.img 
-                    src={category.image} 
-                    alt={category.name} 
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply"
-                  />
-                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-500"></div>
-                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                    <h3 className="text-white font-serif text-3xl mb-2 drop-shadow-md">
-                      {category.name}
-                    </h3>
-                    <div className="w-0 group-hover:w-12 h-0.5 bg-rose-gold transition-all duration-500 ease-out mb-2"></div>
-                    <span className="text-white/90 text-xs tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 font-medium">
-                      View Collection
-                    </span>
+                <Link href={`/category/${category.slug}`} className="w-full flex flex-col items-center">
+                  <div className="w-full aspect-square bg-[#FFF8F8] rounded-3xl overflow-hidden mb-4 shadow-sm group-hover:shadow-lg transition-shadow duration-300 relative">
+                    <img 
+                      src={category.image} 
+                      alt={category.name} 
+                      className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-200 to-slate-300"></div>
+                    </div>
                   </div>
+                  <h3 className="text-charcoal font-medium text-lg mb-1">{category.name}</h3>
+                  <span className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Explore</span>
                 </Link>
               </motion.div>
             ))}
@@ -141,32 +127,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Video / Full Banner Parallax */}
-      <section className="relative h-[70vh] bg-charcoal flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 opacity-40">
-           <img 
-            src="/category_earrings_1779508818040.png" 
-            alt="Kaneera Excellence"
-            className="w-full h-full object-cover object-center mix-blend-luminosity scale-110"
-          />
+      {/* Shop by Bond - AI Generated E-commerce grid */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-8">
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-medium text-charcoal">Shop by Bond</h2>
+            <p className="text-slate mt-2">Find the perfect piece for her.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
+            {[
+              { title: "Wife", img: "/bond_wife_1779595089303.png" },
+              { title: "Mother", img: "/bond_mother_1779595104900.png" },
+              { title: "Sister", img: "/bond_sister_1779595120958.png" },
+              { title: "Friends", img: "/bond_friends_1779595135834.png" }
+            ].map((bond, idx) => (
+              <Link href="/category/all" key={idx} className="group flex flex-col items-center">
+                <div className="w-full aspect-square rounded-2xl overflow-hidden mb-3 bg-slate-50 relative">
+                   <img 
+                      src={bond.img} 
+                      alt={`Gifts for ${bond.title}`} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500"></div>
+                </div>
+                <div className="bg-slate-100/80 backdrop-blur-sm w-full py-2.5 rounded-lg text-center group-hover:bg-[#FFF8F8] transition-colors">
+                  <h3 className="text-charcoal font-medium text-base">{bond.title}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-          className="relative z-10 text-center px-4 max-w-3xl"
-        >
-          <h2 className="font-serif text-4xl md:text-6xl text-cream font-bold mb-6">The Art of Gifting</h2>
-          <p className="text-gray-300 text-lg md:text-xl font-light mb-10">
-            Make every moment unforgettable with our meticulously crafted jewelry pieces. Wrapped with love, delivered with care.
-          </p>
-          <Link href="/category/all">
-            <Button variant="outline" className="border-cream text-cream hover:bg-cream hover:text-charcoal px-8 py-6 rounded-none text-sm tracking-widest uppercase transition-colors duration-500">
-              Find the Perfect Gift
-            </Button>
-          </Link>
-        </motion.div>
       </section>
     </div>
   );
