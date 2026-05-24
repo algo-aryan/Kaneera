@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Search, ShoppingBag, User, Menu } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -16,10 +16,15 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
   const router = useRouter();
   
   const [mounted, setMounted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   if (pathname?.startsWith('/admin')) {
     return null;
@@ -49,9 +54,16 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
       </div>
 
       {/* Main Navbar */}
-      <div className="container mx-auto px-4 h-20 grid grid-cols-3 items-center gap-4">
-        {/* Logo (Left) */}
-        <div className="flex justify-start">
+      <div className="container mx-auto px-4 h-20 flex justify-between items-center md:grid md:grid-cols-3 gap-4">
+        {/* Mobile Menu Button & Logo (Left) */}
+        <div className="flex items-center justify-start gap-3 sm:gap-4">
+          <button 
+            className="md:hidden p-1 text-charcoal hover:text-[#D4AF37] transition-colors"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Open Menu"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
           <Link href="/" className="flex items-center group">
             <span className="font-serif text-3xl sm:text-4xl italic font-bold tracking-widest text-charcoal group-hover:text-[#D4AF37] transition-colors">
               KANEERA
@@ -155,6 +167,47 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
           </button>
         </form>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm md:hidden">
+          <div className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white shadow-xl flex flex-col animate-in slide-in-from-left duration-300">
+            <div className="flex items-center justify-between p-4 border-b border-slate-100">
+              <span className="font-serif text-2xl italic font-bold tracking-widest text-charcoal">
+                KANEERA
+              </span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 text-charcoal hover:text-[#D4AF37] transition-colors"
+                aria-label="Close Menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="flex flex-col py-4 overflow-y-auto">
+              <Link href="/category/all" className="px-6 py-4 text-sm font-medium text-charcoal border-b border-slate-50 hover:bg-slate-50 hover:text-[#D4AF37] transition-colors">All Collections</Link>
+              <Link href="/category/rings" className="px-6 py-4 text-sm font-medium text-charcoal border-b border-slate-50 hover:bg-slate-50 hover:text-[#D4AF37] transition-colors">Rings</Link>
+              <Link href="/category/earrings" className="px-6 py-4 text-sm font-medium text-charcoal border-b border-slate-50 hover:bg-slate-50 hover:text-[#D4AF37] transition-colors">Earrings</Link>
+              <Link href="/category/bracelets" className="px-6 py-4 text-sm font-medium text-charcoal border-b border-slate-50 hover:bg-slate-50 hover:text-[#D4AF37] transition-colors">Bracelets</Link>
+              <Link href="/category/pendants" className="px-6 py-4 text-sm font-medium text-charcoal border-b border-slate-50 hover:bg-slate-50 hover:text-[#D4AF37] transition-colors">Pendants</Link>
+              <Link href="/category/anklets" className="px-6 py-4 text-sm font-medium text-charcoal border-b border-slate-50 hover:bg-slate-50 hover:text-[#D4AF37] transition-colors">Anklets</Link>
+              
+              <div className="mt-8 px-6 space-y-6">
+                {mounted && serverUser ? (
+                  <Link href="/account" className="flex items-center gap-3 text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors">
+                    <User className="w-5 h-5" /> My Account
+                  </Link>
+                ) : (
+                  <Link href="/login" className="flex items-center gap-3 text-sm font-medium text-charcoal hover:text-[#D4AF37] transition-colors">
+                    <User className="w-5 h-5" /> Login / Register
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -248,7 +248,7 @@ export default function Home() {
         <Link href="/category/all" className="block relative group w-full">
           <div className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[3/1] lg:aspect-[4/1] overflow-hidden">
             <img 
-              src="/wide_first_access_banner.png" 
+              src="/new_first_access_banner.png" 
               alt="First Access - Explore the New Collection" 
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
