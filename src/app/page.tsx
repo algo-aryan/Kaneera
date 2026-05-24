@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const categories = [
   { name: "Rings", slug: "rings", image: "/category_rings_1779508804127.png" },
@@ -12,7 +13,21 @@ const categories = [
   { name: "Anklets", slug: "anklets", image: "/category_earrings_1779508818040.png" },
 ];
 
+const banners = [
+  "/hero_banner_giva_1779509207364.png", // fallback textless if first one fails
+  "/hero_banner_giva_1779595073285.png"
+];
+
 export default function Home() {
+  const [currentBanner, setCurrentBanner] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
@@ -28,41 +43,62 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative w-full h-[60vh] md:h-[85vh] bg-[#FFF8F8] overflow-hidden flex items-center justify-center">
-        <motion.img 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          src="/hero_banner_giva_1779595073285.png" 
-          alt="Kaneera Premium Jewelry"
-          className="w-full h-full object-cover object-center"
-        />
+      {/* Hero Section Carousel - Strip format */}
+      <section className="relative w-full aspect-[4/3] md:aspect-[21/9] bg-[#FFF8F8] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.img 
+            key={currentBanner}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            src={banners[currentBanner]} 
+            alt="Kaneera Premium Jewelry"
+            className="w-full h-full object-cover object-center absolute inset-0"
+            onError={(e) => {
+              // fallback if image fails to load (since we are injecting artifacts)
+              (e.target as HTMLImageElement).src = "/hero_banner_no_text_1779509207364.png";
+            }}
+          />
+        </AnimatePresence>
+        
         {/* Soft text overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8F8]/80 to-transparent flex items-center justify-start px-8 md:px-24">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8F8]/90 via-[#FFF8F8]/50 to-transparent flex items-center justify-start px-8 md:px-24 z-10 pointer-events-none">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            className="max-w-xl"
+            className="max-w-xl pointer-events-auto"
           >
             <motion.span variants={fadeInUp} className="text-[#D4AF37] font-sans font-semibold tracking-widest uppercase text-xs md:text-sm mb-4 block">
               The New Standard
             </motion.span>
-            <motion.h1 variants={fadeInUp} className="font-serif text-5xl md:text-7xl font-bold text-charcoal leading-[1.1] mb-6">
+            <motion.h1 variants={fadeInUp} className="font-serif text-4xl md:text-6xl font-bold text-charcoal leading-[1.1] mb-6 drop-shadow-sm">
               Everyday <br/> <span className="text-[#D4AF37] italic font-light">Elegance.</span>
             </motion.h1>
-            <motion.p variants={fadeInUp} className="text-lg text-slate mb-8 max-w-md font-light leading-relaxed">
+            <motion.p variants={fadeInUp} className="text-base md:text-lg text-charcoal mb-8 max-w-md font-medium leading-relaxed drop-shadow-sm">
               Fine silver jewelry designed to elevate your everyday moments.
             </motion.p>
             <motion.div variants={fadeInUp}>
               <Link href="/category/all">
-                <Button size="lg" className="px-10 py-6 text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] shadow-[0_8px_30px_rgb(212,175,55,0.25)] hover:shadow-[0_8px_30px_rgb(212,175,55,0.4)] transition-all duration-300 rounded-full transform hover:-translate-y-1">
+                <Button size="lg" className="px-8 md:px-10 py-5 md:py-6 text-xs md:text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] shadow-[0_8px_30px_rgb(212,175,55,0.25)] hover:shadow-[0_8px_30px_rgb(212,175,55,0.4)] transition-all duration-300 rounded-full transform hover:-translate-y-1">
                   Shop Now
                 </Button>
               </Link>
             </motion.div>
           </motion.div>
+        </div>
+        
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+          {banners.map((_, idx) => (
+            <button 
+              key={idx}
+              onClick={() => setCurrentBanner(idx)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBanner ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-charcoal/30 hover:bg-charcoal/50'}`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
         </div>
       </section>
 

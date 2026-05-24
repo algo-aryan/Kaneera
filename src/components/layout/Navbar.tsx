@@ -49,36 +49,46 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
       </div>
 
       {/* Main Navbar */}
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4 sm:gap-8">
-        {/* Logo */}
-        <Link href="/" className="flex-shrink-0 flex items-center space-x-1">
-          <span className="font-serif text-3xl font-bold tracking-widest text-charcoal">
-            KANEERA
-          </span>
-        </Link>
+      <div className="container mx-auto px-4 h-20 grid grid-cols-3 items-center gap-4">
+        {/* Logo (Left) */}
+        <div className="flex justify-start">
+          <Link href="/" className="flex items-center">
+            <span className="font-serif text-3xl font-bold tracking-widest text-charcoal">
+              KANEERA
+            </span>
+          </Link>
+        </div>
 
-        {/* Search Bar (Centered) */}
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            const q = new FormData(e.currentTarget).get('q');
-            if (q) router.push(`/search?q=${encodeURIComponent(q.toString())}`);
-          }}
-          className="hidden md:flex flex-1 max-w-xl items-center relative"
-        >
-          <input 
-            name="q"
-            type="text" 
-            placeholder="Search for Jewellery..." 
-            className="w-full bg-white border border-slate-200 rounded-full pl-4 pr-10 py-2.5 text-sm text-charcoal focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all placeholder:text-slate-400"
-          />
-          <button type="submit" className="absolute right-3 p-1 text-slate hover:text-[#D4AF37] transition-colors">
-            <Search className="w-4 h-4" />
-          </button>
-        </form>
+        {/* Search Bar (Center) */}
+        <div className="hidden md:flex justify-center w-full">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const q = new FormData(e.currentTarget).get('q');
+              if (q) router.push(`/search?q=${encodeURIComponent(q.toString())}`);
+            }}
+            className="w-full max-w-xl flex items-center relative"
+          >
+            <input 
+              name="q"
+              type="text" 
+              placeholder="Search for Jewellery..." 
+              className="w-full bg-white border border-slate-200 rounded-md pl-4 pr-10 py-2.5 text-sm text-charcoal focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all placeholder:text-slate-400"
+            />
+            <button type="submit" className="absolute right-3 p-1 text-slate hover:text-[#D4AF37] transition-colors">
+              <Search className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
 
         {/* Icons (Right) */}
-        <div className="flex items-center space-x-6 flex-shrink-0">
+        <div className="flex items-center justify-end space-x-6 sm:space-x-8">
+          {/* Stores icon (just decorative for GIVA feel) */}
+          <Link href="#" className="hidden sm:flex flex-col items-center group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-charcoal group-hover:text-[#D4AF37] transition-colors"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span className="text-[9px] uppercase tracking-wider font-semibold text-charcoal mt-1 group-hover:text-[#D4AF37] transition-colors">Stores</span>
+          </Link>
+
           {mounted && serverUser ? (
             <Link href="/account" className="hidden sm:flex flex-col items-center group">
               <User className="w-5 h-5 text-charcoal group-hover:text-[#D4AF37] transition-colors" />
@@ -91,6 +101,11 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
             </Link>
           )}
 
+          <Link href="#" className="hidden sm:flex flex-col items-center group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-charcoal group-hover:text-[#D4AF37] transition-colors"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span className="text-[9px] uppercase tracking-wider font-semibold text-charcoal mt-1 group-hover:text-[#D4AF37] transition-colors">Wishlist</span>
+          </Link>
+
           <button 
             onClick={toggleCart}
             className="flex flex-col items-center group relative"
@@ -98,7 +113,7 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
             <ShoppingBag className="w-5 h-5 text-charcoal group-hover:text-[#D4AF37] transition-colors" />
             <span className="text-[9px] uppercase tracking-wider font-semibold text-charcoal mt-1 group-hover:text-[#D4AF37] transition-colors">Cart</span>
             {mounted && totalItems > 0 && (
-              <span className="absolute -top-1 right-0 w-4 h-4 bg-[#D4AF37] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
+              <span className="absolute -top-1.5 -right-1 w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
                 {totalItems}
               </span>
             )}
