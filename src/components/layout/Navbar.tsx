@@ -52,8 +52,8 @@ export default function Navbar({ serverUser = null }: { serverUser?: any }) {
       <div className="container mx-auto px-4 h-20 grid grid-cols-3 items-center gap-4">
         {/* Logo (Left) */}
         <div className="flex justify-start">
-          <Link href="/" className="flex items-center">
-            <span className="font-serif text-3xl font-bold tracking-widest text-charcoal">
+          <Link href="/" className="flex items-center group">
+            <span className="font-serif text-3xl sm:text-4xl italic font-bold tracking-widest text-charcoal group-hover:text-[#D4AF37] transition-colors">
               KANEERA
             </span>
           </Link>

@@ -66,9 +66,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Ultra-Thin Hero Carousel (Strip Format) */}
+      {/* Hero Carousel */}
       <section 
-        className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] overflow-hidden group transition-colors duration-1000"
+        className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[2/1] lg:aspect-[21/9] overflow-hidden group transition-colors duration-1000"
         style={{ backgroundColor: banners[currentBanner].bgHex }}
       >
         <AnimatePresence mode="wait">
@@ -80,7 +80,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             src={banners[currentBanner].image} 
             alt="Kaneera Premium Jewelry"
-            className="w-full h-full object-cover object-center absolute inset-0"
+            className="w-full h-full object-cover object-[center_30%] absolute inset-0"
           />
         </AnimatePresence>
         
@@ -95,15 +95,15 @@ export default function Home() {
               variants={staggerContainer}
               className={`text-center pointer-events-auto ${banners[currentBanner].textColor} drop-shadow-md`}
             >
-              <motion.h1 variants={fadeInUp} className="font-serif text-2xl md:text-4xl lg:text-5xl tracking-wide mb-2 md:mb-4 whitespace-nowrap">
+              <motion.h1 variants={fadeInUp} className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-wide mb-2 md:mb-4 whitespace-nowrap">
                 {banners[currentBanner].title}
               </motion.h1>
-              <motion.p variants={fadeInUp} className="text-xs md:text-lg font-light mb-4 md:mb-6">
+              <motion.p variants={fadeInUp} className="text-sm md:text-xl font-light mb-4 md:mb-6">
                 {banners[currentBanner].subtitle}
               </motion.p>
               <motion.div variants={fadeInUp}>
                 <Link href="/category/all">
-                  <Button className="px-5 md:px-8 py-3 md:py-6 text-[10px] md:text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] rounded-full shadow-lg transition-transform hover:-translate-y-1 border-none">
+                  <Button className="px-6 md:px-10 py-4 md:py-6 text-xs md:text-sm tracking-widest uppercase bg-[#D4AF37] text-white hover:bg-[#c4a132] rounded-full shadow-lg transition-transform hover:-translate-y-1 border-none">
                     {banners[currentBanner].button}
                   </Button>
                 </Link>
@@ -118,7 +118,7 @@ export default function Home() {
             <button 
               key={idx}
               onClick={() => setCurrentBanner(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBanner ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-white/50 hover:bg-white'}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBanner ? 'w-8 bg-[#D4AF37]' : 'w-2 bg-white/50 hover:bg-white'}`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
@@ -126,9 +126,9 @@ export default function Home() {
       </section>
 
       {/* Shop by Category - Pill Carousel */}
-      <section className="py-12 md:py-16 bg-white overflow-hidden">
+      <section className="py-12 md:py-20 bg-white overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 pb-8 justify-start md:justify-center px-4 snap-x">
+          <div className="flex overflow-x-auto no-scrollbar gap-6 md:gap-10 pb-8 justify-start md:justify-center px-4 snap-x">
             {categories.map((category, index) => (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -139,14 +139,14 @@ export default function Home() {
                 className="flex flex-col items-center group flex-shrink-0 snap-center"
               >
                 <Link href={`/category/${category.slug}`} className="flex flex-col items-center">
-                  <div className="w-24 h-24 md:w-32 md:h-32 bg-[#FFF0F0] rounded-[30px] overflow-hidden mb-3 md:mb-4 shadow-sm border-[3px] border-[#FFE4E4] group-hover:border-[#D4AF37] group-hover:shadow-md transition-all duration-300">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 bg-[#FFF0F0] rounded-2xl overflow-hidden mb-4 shadow-sm border-[3px] border-[#FFE4E4] group-hover:border-[#D4AF37] group-hover:shadow-md transition-all duration-300">
                     <img 
                       src={category.image} 
                       alt={category.name} 
                       className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
-                  <h3 className="text-charcoal font-medium text-sm md:text-base">{category.name}</h3>
+                  <h3 className="text-charcoal font-medium text-base md:text-lg">{category.name}</h3>
                 </Link>
               </motion.div>
             ))}
