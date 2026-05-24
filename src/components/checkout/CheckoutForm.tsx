@@ -3,13 +3,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { useCartStore } from '@/store/useCartStore';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, MapPin } from 'lucide-react';
-
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
+import { ShieldCheck, MapPin, QrCode } from 'lucide-react';
 
 export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }: { userEmail: string, userProfile: any, pastOrders?: any[] }) {
   const router = useRouter();
@@ -19,12 +13,19 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  // Flow State
+  const [step, setStep] = useState(1);
+  const [finalAddressStr, setFinalAddressStr] = useState("");
+
   // Form State
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [pincode, setPincode] = useState('');
   
+  // Payment State
+  const [utr, setUtr] = useState('');
+
   // Saved Address Extraction
   const uniqueAddresses = Array.from(new Set(pastOrders.map(o => o.shipping_address?.address).filter(Boolean)));
   const [selectedAddress, setSelectedAddress] = useState<string>(uniqueAddresses.length > 0 ? uniqueAddresses[0] as string : 'new');
@@ -62,34 +63,42 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
 
   useEffect(() => {
     setMounted(true);
-    // Load Razorpay Script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
   }, []);
+
+  const handleProceedToPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedAddress === 'new') {
+      if (!address || !city || !state || !pincode) {
+        setError("Please fill out all address fields.");
+        return;
+      }
+      setFinalAddressStr(`${address}, ${city}, ${state} ${pincode}`);
+    } else {
+      setFinalAddressStr(selectedAddress);
+    }
+    setError(null);
+    setStep(2);
+  };
 
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (items.length === 0) return;
     
+    if (utr.trim().length < 12) {
+      setError("Please enter a valid 12-digit UTR or Transaction ID.");
+      return;
+    }
+
     setError(null);
-    const formData = new FormData(e.currentTarget);
-    const fullAddress = `${formData.get('address')}, ${formData.get('city')}, ${formData.get('state')} ${formData.get('pincode')}`;
-    const finalAddress = selectedAddress === 'new' ? fullAddress : selectedAddress;
 
     startTransition(async () => {
-      // 1. Call Server Action to create Order and generate Razorpay ID
       try {
-        const { createRazorpayOrder } = await import('@/app/checkout/actions');
-        const orderResult = await createRazorpayOrder({
+        const { createManualUpiOrder } = await import('@/app/checkout/actions');
+        const orderResult = await createManualUpiOrder({
           items: items.map(i => ({ product_id: i.id, quantity: i.quantity, price: i.price })),
-          shippingAddress: finalAddress,
+          shippingAddress: finalAddressStr,
           mobileNumber: userProfile?.phone_number || '',
+          utr: utr.trim(),
           promoCode: appliedPromo?.code,
         });
 
@@ -98,46 +107,8 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
           return;
         }
 
-        // 2. Open Razorpay Popup
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_YOUR_KEY', // This needs to be in .env.local
-          amount: orderResult.amount, // in paise
-          currency: orderResult.currency,
-          name: "Kaneera by Aashi",
-          description: "Premium Jewelry Purchase",
-          order_id: orderResult.razorpayOrderId,
-          handler: async function (response: any) {
-            // 3. Verify Payment Signature on Server
-            const { verifyPayment } = await import('@/app/checkout/actions');
-            const verifyResult = await verifyPayment({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              internal_order_id: orderResult.internalOrderId,
-            });
-
-            if (verifyResult.success) {
-              clearCart();
-              router.push(`/order-confirmation?order_id=${orderResult.internalOrderId}`);
-            } else {
-              setError("Payment verification failed. Please contact support.");
-            }
-          },
-          prefill: {
-            name: userProfile?.full_name || '',
-            email: userEmail,
-            contact: userProfile?.phone_number || '',
-          },
-          theme: {
-            color: "#D4AF37", // rose-gold/gold matching brand
-          }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (response: any){
-           setError(`Payment failed: ${response.error.description}`);
-        });
-        rzp.open();
+        clearCart();
+        router.push(`/order-confirmation?order_id=${orderResult.internalOrderId}`);
 
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred");
@@ -159,8 +130,13 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
   }
 
   const subtotal = getTotalPrice();
-  const shipping = subtotal > 2000 ? 0 : 150; // Free shipping over 2000
-  const total = subtotal + shipping;
+  let d = 0;
+  if (appliedPromo) {
+    if (appliedPromo.discountPercentage) d = subtotal * (appliedPromo.discountPercentage / 100);
+    else if (appliedPromo.discountAmount) d = appliedPromo.discountAmount;
+  }
+  const shipping = (subtotal - d) > 2000 ? 0 : 150;
+  const total = subtotal - d + shipping;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
@@ -173,101 +149,143 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
           </div>
         )}
 
-        <div className="bg-white p-8 border border-charcoal/5 shadow-sm">
-          <div className="flex items-center space-x-2 mb-6">
-            <ShieldCheck className="w-5 h-5 text-green-600" />
-            <h2 className="font-serif text-xl text-charcoal">Contact Details</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Email</label>
-              <input type="text" disabled value={userEmail} className="w-full border border-charcoal/20 bg-cream/50 px-4 py-3 text-sm cursor-not-allowed text-charcoal/70" />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Mobile</label>
-              <input type="text" disabled value={userProfile?.phone_number || ''} className="w-full border border-charcoal/20 bg-cream/50 px-4 py-3 text-sm cursor-not-allowed text-charcoal/70" />
-            </div>
-          </div>
-          <p className="text-[10px] text-slate mt-2 italic">* Contact details are linked to your secure account profile.</p>
-        </div>
-
-        <div className="bg-white p-8 border border-charcoal/5 shadow-sm">
-          <div className="flex items-center space-x-2 mb-6">
-            <MapPin className="w-5 h-5 text-charcoal" />
-            <h2 className="font-serif text-xl text-charcoal">Shipping Address</h2>
-          </div>
-          
-          <div className="space-y-6">
-            {uniqueAddresses.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-widest text-charcoal">Select Delivery Address</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {uniqueAddresses.map((addr: any, idx: number) => (
-                    <label key={idx} className={`flex items-start p-4 border cursor-pointer transition-colors ${selectedAddress === addr ? 'border-rose-gold bg-cream/30' : 'border-charcoal/10 hover:border-charcoal/30'}`}>
-                      <div className="flex items-center h-5">
-                        <input 
-                          type="radio" 
-                          name="addressSelection" 
-                          value={addr}
-                          checked={selectedAddress === addr}
-                          onChange={() => setSelectedAddress(addr)}
-                          className="w-4 h-4 text-rose-gold border-gray-300 focus:ring-rose-gold"
-                        />
-                      </div>
-                      <div className="ml-3 text-sm flex-1">
-                        <p className="font-medium text-charcoal">Saved Address {idx + 1}</p>
-                        <p className="text-slate mt-1 leading-relaxed">{addr}</p>
-                      </div>
-                    </label>
-                  ))}
-                  <label className={`flex items-center p-4 border cursor-pointer transition-colors ${selectedAddress === 'new' ? 'border-rose-gold bg-cream/30' : 'border-charcoal/10 hover:border-charcoal/30'}`}>
-                    <div className="flex items-center h-5">
-                      <input 
-                        type="radio" 
-                        name="addressSelection" 
-                        value="new"
-                        checked={selectedAddress === 'new'}
-                        onChange={() => setSelectedAddress('new')}
-                        className="w-4 h-4 text-rose-gold border-gray-300 focus:ring-rose-gold"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm font-medium text-charcoal">
-                      Use a New Address
-                    </div>
-                  </label>
+        {step === 1 ? (
+          <>
+            <div className="bg-white p-8 border border-charcoal/5 shadow-sm">
+              <div className="flex items-center space-x-2 mb-6">
+                <ShieldCheck className="w-5 h-5 text-green-600" />
+                <h2 className="font-serif text-xl text-charcoal">Contact Details</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Email</label>
+                  <input type="text" disabled value={userEmail} className="w-full border border-charcoal/20 bg-cream/50 px-4 py-3 text-sm cursor-not-allowed text-charcoal/70" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Mobile</label>
+                  <input type="text" disabled value={userProfile?.phone_number || ''} className="w-full border border-charcoal/20 bg-cream/50 px-4 py-3 text-sm cursor-not-allowed text-charcoal/70" />
                 </div>
               </div>
-            )}
+              <p className="text-[10px] text-slate mt-2 italic">* Contact details are linked to your secure account profile.</p>
+            </div>
 
-            {selectedAddress === 'new' && (
-              <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-4 pt-4 border-t border-charcoal/10 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Address / Apartment / Suite</label>
-                  <input required value={address} onChange={e => setAddress(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="123 Luxury Lane, Apt 4B" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">City</label>
-                    <input required value={city} onChange={e => setCity(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="Mumbai" />
+            <div className="bg-white p-8 border border-charcoal/5 shadow-sm">
+              <div className="flex items-center space-x-2 mb-6">
+                <MapPin className="w-5 h-5 text-charcoal" />
+                <h2 className="font-serif text-xl text-charcoal">Shipping Address</h2>
+              </div>
+              
+              <div className="space-y-6">
+                {uniqueAddresses.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-semibold uppercase tracking-widest text-charcoal">Select Delivery Address</h3>
+                    <div className="grid grid-cols-1 gap-3">
+                      {uniqueAddresses.map((addr: any, idx: number) => (
+                        <label key={idx} className={`flex items-start p-4 border cursor-pointer transition-colors ${selectedAddress === addr ? 'border-rose-gold bg-cream/30' : 'border-charcoal/10 hover:border-charcoal/30'}`}>
+                          <div className="flex items-center h-5">
+                            <input 
+                              type="radio" 
+                              name="addressSelection" 
+                              value={addr}
+                              checked={selectedAddress === addr}
+                              onChange={() => setSelectedAddress(addr)}
+                              className="w-4 h-4 text-rose-gold border-gray-300 focus:ring-rose-gold"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm flex-1">
+                            <p className="font-medium text-charcoal">Saved Address {idx + 1}</p>
+                            <p className="text-slate mt-1 leading-relaxed">{addr}</p>
+                          </div>
+                        </label>
+                      ))}
+                      <label className={`flex items-center p-4 border cursor-pointer transition-colors ${selectedAddress === 'new' ? 'border-rose-gold bg-cream/30' : 'border-charcoal/10 hover:border-charcoal/30'}`}>
+                        <div className="flex items-center h-5">
+                          <input 
+                            type="radio" 
+                            name="addressSelection" 
+                            value="new"
+                            checked={selectedAddress === 'new'}
+                            onChange={() => setSelectedAddress('new')}
+                            className="w-4 h-4 text-rose-gold border-gray-300 focus:ring-rose-gold"
+                          />
+                        </div>
+                        <div className="ml-3 text-sm font-medium text-charcoal">
+                          Use a New Address
+                        </div>
+                      </label>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">State</label>
-                    <input required value={state} onChange={e => setState(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="Maharashtra" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Pincode</label>
-                  <input required value={pincode} onChange={e => setPincode(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="400001" />
+                )}
+
+                {selectedAddress === 'new' && (
+                  <form id="address-form" onSubmit={handleProceedToPayment} className="space-y-4 pt-4 border-t border-charcoal/10 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Address / Apartment / Suite</label>
+                      <input required value={address} onChange={e => setAddress(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="123 Luxury Lane, Apt 4B" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">City</label>
+                        <input required value={city} onChange={e => setCity(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="Mumbai" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">State</label>
+                        <input required value={state} onChange={e => setState(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="Maharashtra" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Pincode</label>
+                      <input required value={pincode} onChange={e => setPincode(e.target.value)} type="text" className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" placeholder="400001" />
+                    </div>
+                  </form>
+                )}
+                
+                {selectedAddress !== 'new' && (
+                  <form id="address-form" onSubmit={handleProceedToPayment} className="hidden"></form>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="bg-white p-8 border border-charcoal/5 shadow-sm animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="flex items-center space-x-2 mb-6 border-b border-charcoal/10 pb-4">
+              <QrCode className="w-5 h-5 text-charcoal" />
+              <h2 className="font-serif text-xl text-charcoal">Secure UPI Payment</h2>
+            </div>
+            
+            <div className="flex flex-col items-center justify-center space-y-6 text-center">
+              <p className="text-sm text-slate">Scan the QR code below using any UPI app (GPay, PhonePe, Paytm) to pay <strong className="text-charcoal font-bold">₹ {total.toFixed(2)}</strong>.</p>
+              
+              <div className="p-4 bg-white border-2 border-charcoal/10 rounded-xl shadow-sm">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=kaneera@upi&pn=Kaneera&am=${total.toFixed(2)}`)}`} 
+                  alt="UPI QR Code" 
+                  className="w-48 h-48"
+                />
+              </div>
+
+              <div className="bg-cream/50 p-4 w-full rounded-md border border-rose-gold/20">
+                <p className="text-xs font-semibold uppercase tracking-widest text-charcoal mb-1">UPI ID</p>
+                <p className="text-lg font-mono text-charcoal select-all">kaneera@upi</p>
+              </div>
+
+              <form id="payment-form" onSubmit={handlePlaceOrder} className="w-full space-y-4 pt-4 border-t border-charcoal/10">
+                <div className="text-left">
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">12-Digit UTR / Transaction ID</label>
+                  <input 
+                    required 
+                    value={utr} 
+                    onChange={e => setUtr(e.target.value)} 
+                    type="text" 
+                    className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" 
+                    placeholder="e.g. 312345678901" 
+                  />
+                  <p className="text-[10px] text-slate mt-2">* Required to verify your payment and process your order.</p>
                 </div>
               </form>
-            )}
-            
-            {/* Hidden form just for submission handling when using saved address */}
-            {selectedAddress !== 'new' && (
-              <form id="checkout-form" onSubmit={handlePlaceOrder} className="hidden"></form>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
 
@@ -307,11 +325,12 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
                     onChange={e => setPromoCodeInput(e.target.value.toUpperCase())}
                     placeholder="Enter code" 
                     className="flex-1 border border-charcoal/20 bg-transparent px-4 py-2 text-sm focus:border-rose-gold focus:outline-none"
+                    disabled={step === 2}
                   />
                   <button 
                     type="button" 
                     onClick={handleApplyPromo}
-                    disabled={isApplyingPromo || !promoCodeInput.trim()}
+                    disabled={isApplyingPromo || !promoCodeInput.trim() || step === 2}
                     className="bg-charcoal text-white px-4 py-2 text-xs tracking-widest uppercase hover:bg-rose-gold transition-colors disabled:opacity-50"
                   >
                     {isApplyingPromo ? '...' : 'Apply'}
@@ -331,51 +350,52 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
             {appliedPromo && (
               <div className="flex justify-between text-green-600">
                 <span>Discount ({appliedPromo.code})</span>
-                <span>- ₹ {(() => {
-                  let d = 0;
-                  if (appliedPromo.discountPercentage) d = subtotal * (appliedPromo.discountPercentage / 100);
-                  else if (appliedPromo.discountAmount) d = appliedPromo.discountAmount;
-                  return d.toFixed(2);
-                })()}</span>
+                <span>- ₹ {d.toFixed(2)}</span>
               </div>
             )}
 
             <div className="flex justify-between text-slate">
               <span>Shipping</span>
-              <span>{(() => {
-                  let d = 0;
-                  if (appliedPromo) {
-                    if (appliedPromo.discountPercentage) d = subtotal * (appliedPromo.discountPercentage / 100);
-                    else if (appliedPromo.discountAmount) d = appliedPromo.discountAmount;
-                  }
-                  return (subtotal - d) > 2000 ? 'Free' : '₹ 150.00';
-              })()}</span>
+              <span>{shipping === 0 ? 'Free' : `₹ ${shipping.toFixed(2)}`}</span>
             </div>
             <div className="flex justify-between text-charcoal font-bold text-lg pt-2 border-t border-charcoal/10 mt-2">
               <span>Total</span>
-              <span>₹ {(() => {
-                  let d = 0;
-                  if (appliedPromo) {
-                    if (appliedPromo.discountPercentage) d = subtotal * (appliedPromo.discountPercentage / 100);
-                    else if (appliedPromo.discountAmount) d = appliedPromo.discountAmount;
-                  }
-                  const s = (subtotal - d) > 2000 ? 0 : 150;
-                  return (subtotal - d + s).toFixed(2);
-              })()}</span>
+              <span>₹ {total.toFixed(2)}</span>
             </div>
           </div>
 
-          <button 
-            type="submit" 
-            form="checkout-form"
-            disabled={isPending}
-            className={`w-full bg-charcoal text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-rose-gold transition-colors duration-300 ${isPending ? 'opacity-70 cursor-wait' : ''}`}
-          >
-            {isPending ? 'Processing...' : 'Pay with Razorpay'}
-          </button>
+          {step === 1 ? (
+            <button 
+              type="submit" 
+              form="address-form"
+              className="w-full bg-charcoal text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-rose-gold transition-colors duration-300"
+            >
+              Proceed to Payment
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <button 
+                type="submit" 
+                form="payment-form"
+                disabled={isPending}
+                className={`w-full bg-charcoal text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-rose-gold transition-colors duration-300 ${isPending ? 'opacity-70 cursor-wait' : ''}`}
+              >
+                {isPending ? 'Processing...' : 'Confirm Payment'}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setStep(1)}
+                disabled={isPending}
+                className="w-full bg-transparent text-slate border border-slate/20 px-8 py-3 text-xs font-semibold tracking-widest uppercase hover:text-charcoal hover:border-charcoal transition-colors duration-300"
+              >
+                Back to Address
+              </button>
+            </div>
+          )}
 
-          <p className="text-[10px] text-center text-slate mt-4">
-            Payments are secured by Razorpay with 256-bit encryption.
+          <p className="text-[10px] text-center text-slate mt-4 flex items-center justify-center space-x-1">
+            <ShieldCheck className="w-3 h-3 text-green-600" />
+            <span>Secure Checkout</span>
           </p>
         </div>
       </div>

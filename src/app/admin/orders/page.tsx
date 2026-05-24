@@ -73,6 +73,12 @@ export default async function AdminOrdersPage() {
                             ? order.shipping_address 
                             : order.shipping_address?.address || JSON.stringify(order.shipping_address)}
                         </p>
+                        {typeof order.shipping_address !== 'string' && order.shipping_address?.utr && (
+                          <div className="mt-2 bg-yellow-50 border border-yellow-200 p-2 rounded">
+                            <p className="text-[10px] font-semibold uppercase tracking-widest text-yellow-800 mb-0.5">UPI UTR Number</p>
+                            <p className="text-xs font-mono font-bold text-yellow-900">{order.shipping_address.utr}</p>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 align-top min-w-[250px]">
@@ -92,7 +98,9 @@ export default async function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4 align-top">
                       <p className="font-medium text-charcoal">₹ {order.total_amount.toFixed(2)}</p>
-                      <p className="text-xs mt-1 text-slate-400">Razorpay</p>
+                      <p className="text-xs mt-1 text-slate-400">
+                        {order.payment_method === 'manual_upi' ? 'Manual UPI' : 'Razorpay'}
+                      </p>
                     </td>
                     <td className="px-6 py-4 align-top">
                       <span className={`px-2 py-1 inline-flex text-[10px] font-semibold tracking-wider uppercase rounded-full border ${

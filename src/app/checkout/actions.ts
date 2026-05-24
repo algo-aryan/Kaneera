@@ -179,3 +179,97 @@ export async function validatePromoCode(code: string) {
     code: promo.code
   };
 }
+
+export async function createManualUpiOrder(data: { items: any[], shippingAddress: string, mobileNumber: string, utr: string, promoCode?: string }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'You must be logged in to checkout.' };
+  }
+
+  try {
+    let subtotal = 0;
+    
+    // Fetch real prices from database
+    const productIds = data.items.map(item => item.product_id);
+    const { data: dbProducts, error: dbError } = await supabase
+      .from('products')
+      .select('id, price')
+      .in('id', productIds);
+
+    if (dbError || !dbProducts) throw new Error("Could not verify product prices");
+
+    const priceMap = new Map(dbProducts.map(p => [p.id, p.price]));
+    
+    const orderItemsToInsert = data.items.map(clientItem => {
+      const realPrice = priceMap.get(clientItem.product_id);
+      if (realPrice === undefined) throw new Error(`Product ${clientItem.product_id} not found`);
+      subtotal += realPrice * clientItem.quantity;
+      return {
+        product_id: clientItem.product_id,
+        quantity: clientItem.quantity,
+        price_at_time: realPrice
+      };
+    });
+
+    let discountAmount = 0;
+    
+    if (data.promoCode) {
+      const { data: promo } = await supabase
+        .from('promotions')
+        .select('*')
+        .eq('code', data.promoCode.toUpperCase())
+        .eq('is_active', true)
+        .single();
+        
+      if (promo) {
+        if (promo.discount_percentage) {
+          discountAmount = subtotal * (promo.discount_percentage / 100);
+        } else if (promo.discount_amount) {
+          discountAmount = promo.discount_amount;
+        }
+      }
+    }
+
+    const shipping = (subtotal - discountAmount) > 2000 ? 0 : 150;
+    const finalTotal = subtotal - discountAmount + shipping;
+
+    // Insert into orders table as 'pending' with 'manual_upi'
+    const { data: orderRow, error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        user_id: user.id,
+        total_amount: finalTotal,
+        shipping_address: { address: data.shippingAddress, utr: data.utr }, // Bundle UTR in JSONB
+        mobile_number: data.mobileNumber || 'Unknown',
+        status: 'pending',
+        payment_method: 'manual_upi',
+        payment_status: 'unpaid'
+      })
+      .select('id')
+      .single();
+
+    if (orderError) throw orderError;
+
+    const fullOrderItems = orderItemsToInsert.map(item => ({
+      ...item,
+      order_id: orderRow.id
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(fullOrderItems);
+
+    if (itemsError) throw itemsError;
+
+    return { 
+      success: true,
+      internalOrderId: orderRow.id
+    };
+
+  } catch (err: any) {
+    console.error("Manual UPI Checkout error:", err);
+    return { error: err.message || "Failed to create order" };
+  }
+}
