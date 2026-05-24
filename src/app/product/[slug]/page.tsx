@@ -76,11 +76,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* Right: Product Details */}
           <div className="flex flex-col md:pl-8 lg:pl-12 pt-4">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-charcoal mb-4 leading-tight">{product.name}</h1>
+            <h1 className="font-serif text-4xl md:text-5xl font-medium text-charcoal mb-4 leading-tight">{product.name}</h1>
             
-            <div className="flex flex-col space-y-4 mb-8 pb-8 border-b border-slate/10">
-              <p className="text-3xl font-serif text-charcoal font-medium">₹ {product.price.toFixed(2)}</p>
-              <div className="flex items-center text-rose-gold">
+            <div className="flex flex-col space-y-4 mb-8">
+              <p className="text-3xl font-serif text-rose-gold font-medium">₹ {product.price.toFixed(2)}</p>
+              <div className="flex items-center text-[#D4AF37]">
                 <div className="flex">
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
@@ -88,35 +88,35 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current opacity-50" />
                 </div>
-                <span className="text-sm text-slate ml-3 hover:text-charcoal cursor-pointer transition-colors">(24 Reviews)</span>
+                <span className="text-sm text-slate ml-3 hover:text-charcoal cursor-pointer transition-colors border-b border-slate/30">(24 Reviews)</span>
               </div>
             </div>
 
-            <p className="text-slate mb-10 leading-relaxed font-light text-lg">
+            <p className="text-slate/80 mb-10 leading-relaxed font-light text-lg">
               {product.description}
             </p>
 
-            <div className="space-y-4 mb-10 text-sm font-light">
-              <div className="flex items-center">
-                <span className="w-32 text-slate uppercase tracking-wider text-xs font-semibold">Material</span>
-                <span className="text-charcoal">{product.material}</span>
+            <div className="space-y-4 mb-10 text-sm font-light bg-[#FFF8F8] p-6 rounded-2xl">
+              <div className="flex items-center justify-between border-b border-rose-gold/10 pb-3">
+                <span className="text-slate uppercase tracking-widest text-xs font-semibold">Material</span>
+                <span className="text-charcoal font-medium">{product.material}</span>
               </div>
-              <div className="flex items-center">
-                <span className="w-32 text-slate uppercase tracking-wider text-xs font-semibold">SKU</span>
-                <span className="text-charcoal">{product.sku}</span>
+              <div className="flex items-center justify-between border-b border-rose-gold/10 pb-3">
+                <span className="text-slate uppercase tracking-widest text-xs font-semibold">SKU</span>
+                <span className="text-charcoal font-mono text-xs">{product.sku}</span>
               </div>
-              <div className="flex items-center">
-                <span className="w-32 text-slate uppercase tracking-wider text-xs font-semibold">Availability</span>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-slate uppercase tracking-widest text-xs font-semibold">Availability</span>
                 {product.stock_quantity > 0 ? (
-                  <span className="text-green-600 font-medium">In Stock</span>
+                  <span className="text-green-600 font-medium bg-green-50 px-3 py-1 rounded-full text-xs">In Stock</span>
                 ) : (
-                  <span className="text-red-500 font-medium">Out of Stock</span>
+                  <span className="text-red-500 font-medium bg-red-50 px-3 py-1 rounded-full text-xs">Out of Stock</span>
                 )}
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 mb-12 w-full max-w-sm">
               <AddToCartButton 
                 product={{
                   id: product.id,
@@ -129,18 +129,24 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             {/* Trust Mini-Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 bg-[#FDFBF7] p-6 border border-rose-gold/10">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <ShieldCheck className="w-6 h-6 text-rose-gold shrink-0" />
-                <span className="text-xs text-charcoal font-medium uppercase tracking-wider">100% Authentic</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="flex flex-col items-center text-center space-y-3 bg-[#FFF8F8] p-5 rounded-2xl hover:shadow-md transition-shadow">
+                <div className="bg-white p-3 rounded-full shadow-sm">
+                  <ShieldCheck className="w-6 h-6 text-[#D4AF37] shrink-0" />
+                </div>
+                <span className="text-xs text-charcoal font-semibold uppercase tracking-wider">100% Authentic</span>
               </div>
-              <div className="flex flex-col items-center text-center space-y-2 border-l border-r border-rose-gold/10 px-2">
-                <Truck className="w-6 h-6 text-rose-gold shrink-0" />
-                <span className="text-xs text-charcoal font-medium uppercase tracking-wider">Free Shipping</span>
+              <div className="flex flex-col items-center text-center space-y-3 bg-[#FFF8F8] p-5 rounded-2xl hover:shadow-md transition-shadow">
+                <div className="bg-white p-3 rounded-full shadow-sm">
+                  <Truck className="w-6 h-6 text-[#D4AF37] shrink-0" />
+                </div>
+                <span className="text-xs text-charcoal font-semibold uppercase tracking-wider">Free Shipping</span>
               </div>
-              <div className="flex flex-col items-center text-center space-y-2">
-                <RefreshCw className="w-6 h-6 text-rose-gold shrink-0" />
-                <span className="text-xs text-charcoal font-medium uppercase tracking-wider">30-Day Returns</span>
+              <div className="flex flex-col items-center text-center space-y-3 bg-[#FFF8F8] p-5 rounded-2xl hover:shadow-md transition-shadow">
+                <div className="bg-white p-3 rounded-full shadow-sm">
+                  <RefreshCw className="w-6 h-6 text-[#D4AF37] shrink-0" />
+                </div>
+                <span className="text-xs text-charcoal font-semibold uppercase tracking-wider">30-Day Returns</span>
               </div>
             </div>
           </div>

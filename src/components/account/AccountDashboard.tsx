@@ -47,7 +47,7 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
     <div className="flex flex-col md:flex-row gap-8">
       {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 flex-shrink-0">
-        <div className="bg-white p-6 shadow-sm border border-charcoal/5 h-full">
+        <div className="bg-white p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] rounded-2xl h-full">
           <div className="mb-8">
             <h3 className="font-serif text-xl text-charcoal truncate">
               {displayName}
@@ -58,21 +58,21 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
           <nav className="space-y-2">
             <button 
               onClick={() => { setActiveTab('orders'); setSelectedOrder(null); }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors text-left ${activeTab === 'orders' ? 'bg-cream text-rose-gold font-medium border-l-2 border-rose-gold' : 'text-charcoal hover:bg-cream/50 hover:text-rose-gold'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors text-left rounded-xl ${activeTab === 'orders' ? 'bg-[#FFF8F8] text-[#D4AF37] font-medium' : 'text-charcoal hover:bg-[#FFF8F8] hover:text-[#D4AF37]'}`}
             >
               <Package className="w-4 h-4" />
               <span>Order History</span>
             </button>
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors text-left ${activeTab === 'profile' ? 'bg-cream text-rose-gold font-medium border-l-2 border-rose-gold' : 'text-charcoal hover:bg-cream/50 hover:text-rose-gold'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors text-left rounded-xl ${activeTab === 'profile' ? 'bg-[#FFF8F8] text-[#D4AF37] font-medium' : 'text-charcoal hover:bg-[#FFF8F8] hover:text-[#D4AF37]'}`}
             >
               <User className="w-4 h-4" />
               <span>Profile Details</span>
             </button>
             <button 
               onClick={() => setActiveTab('addresses')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors text-left ${activeTab === 'addresses' ? 'bg-cream text-rose-gold font-medium border-l-2 border-rose-gold' : 'text-charcoal hover:bg-cream/50 hover:text-rose-gold'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors text-left rounded-xl ${activeTab === 'addresses' ? 'bg-[#FFF8F8] text-[#D4AF37] font-medium' : 'text-charcoal hover:bg-[#FFF8F8] hover:text-[#D4AF37]'}`}
             >
               <MapPin className="w-4 h-4" />
               <span>Saved Addresses</span>
@@ -96,11 +96,11 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
 
       {/* Main Content Area */}
       <main className="flex-1 min-w-0">
-        <div className="bg-white p-6 shadow-sm border border-charcoal/5 min-h-[500px]">
+        <div className="bg-white p-6 md:p-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] rounded-2xl min-h-[500px]">
           
           {activeTab === 'orders' && (
             <div className="space-y-6">
-              <h2 className="font-serif text-2xl text-charcoal border-b border-charcoal/10 pb-4">Order History</h2>
+              <h2 className="font-serif text-2xl text-charcoal border-b border-charcoal/10 pb-6">Order History</h2>
               
               {orders.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
@@ -117,10 +117,10 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
                 </div>
               ) : selectedOrder ? (
                 <div className="space-y-6">
-                  <button onClick={() => setSelectedOrder(null)} className="text-sm text-slate hover:text-rose-gold transition-colors flex items-center">
+                  <button onClick={() => setSelectedOrder(null)} className="text-sm text-slate hover:text-rose-gold transition-colors flex items-center font-medium mb-2">
                     ← Back to Orders
                   </button>
-                  <div className="border border-charcoal/10 bg-white shadow-sm p-6 space-y-6">
+                  <div className="bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8 space-y-6 border border-slate-100">
                     <div className="flex justify-between items-start pb-6 border-b border-charcoal/10">
                       <div>
                         <h3 className="font-serif text-xl text-charcoal">Order Receipt</h3>
@@ -198,9 +198,9 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
                                         'bg-slate-100 text-slate-600 border-slate-200';
 
                     return (
-                    <div key={order.id} className="group border border-charcoal/10 bg-white hover:border-rose-gold/50 transition-colors shadow-sm overflow-hidden flex flex-col sm:flex-row">
+                    <div key={order.id} className="group bg-white hover:shadow-xl hover:shadow-[#D4AF37]/5 transition-all duration-300 rounded-2xl overflow-hidden flex flex-col sm:flex-row border border-slate-100">
                       {/* Image Thumbnail (Left Side) */}
-                      <div className="w-full sm:w-48 h-48 sm:h-auto bg-cream/30 shrink-0 relative border-b sm:border-b-0 sm:border-r border-charcoal/10 overflow-hidden">
+                      <div className="w-full sm:w-48 h-48 sm:h-auto bg-[#FFF8F8] shrink-0 relative overflow-hidden">
                         {order.order_items?.[0]?.products?.image_urls?.[0] ? (
                           <img src={order.order_items[0].products.image_urls[0]} alt="Product" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 mix-blend-multiply" />
                         ) : (

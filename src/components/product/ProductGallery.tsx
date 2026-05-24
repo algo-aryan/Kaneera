@@ -13,7 +13,7 @@ export function ProductGallery({ images }: ProductGalleryProps) {
   return (
     <div className="flex flex-col md:flex-row-reverse gap-4">
       {/* Main Image */}
-      <div className="flex-1 relative aspect-[3/4] bg-[#FDFBF7] overflow-hidden">
+      <div className="flex-1 relative aspect-[3/4] bg-[#FFF8F8] overflow-hidden rounded-2xl">
         <AnimatePresence mode="wait">
           <motion.img
             key={currentIndex}
@@ -34,9 +34,9 @@ export function ProductGallery({ images }: ProductGalleryProps) {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`relative aspect-[3/4] overflow-hidden bg-[#FDFBF7] transition-all duration-300 shrink-0 w-20 md:w-full ${
+            className={`relative aspect-[3/4] overflow-hidden bg-[#FFF8F8] rounded-xl transition-all duration-300 shrink-0 w-20 md:w-full ${
               currentIndex === index 
-                ? 'ring-1 ring-charcoal ring-offset-2' 
+                ? 'ring-2 ring-[#D4AF37] ring-offset-2' 
                 : 'opacity-60 hover:opacity-100'
             }`}
           >

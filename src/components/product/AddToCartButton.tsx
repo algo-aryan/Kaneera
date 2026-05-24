@@ -30,7 +30,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
     <Button 
       onClick={handleAddToCart}
       size="lg" 
-      className="flex-1 text-sm tracking-widest uppercase py-6 rounded-none shadow-none bg-charcoal text-white hover:bg-rose-gold transition-colors duration-300"
+      className="flex-1 text-sm font-semibold tracking-widest uppercase py-6 rounded-full shadow-[0_8px_30px_rgb(212,175,55,0.25)] bg-[#D4AF37] text-white hover:bg-[#c4a132] hover:shadow-[0_8px_30px_rgb(212,175,55,0.4)] transition-all duration-300 transform hover:-translate-y-1"
     >
       Add to Cart
     </Button>
