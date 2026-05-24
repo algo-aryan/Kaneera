@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { getOrderConfirmationEmail } from '@/utils/emails/templates';
+import { getOrderPaidEmail } from '@/utils/emails/templates';
 
 export async function POST(req: Request) {
   try {
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
               from: 'Kaneera <orders@kaneera.in>',
               to: [email],
               subject: 'Order Confirmation - Kaneera',
-              html: getOrderConfirmationEmail(order.id, order.total_amount, addressString)
+              html: getOrderPaidEmail(order.id, order.total_amount, addressString)
             });
             console.log(`Order confirmation email sent to ${email}`);
           }
