@@ -247,40 +247,44 @@ export default function CheckoutForm({ userEmail, userProfile, pastOrders = [] }
             </div>
           </>
         ) : (
-          <div className="bg-white p-8 border border-charcoal/5 shadow-sm animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center space-x-2 mb-6 border-b border-charcoal/10 pb-4">
-              <QrCode className="w-5 h-5 text-charcoal" />
-              <h2 className="font-serif text-xl text-charcoal">Secure UPI Payment</h2>
-            </div>
-            
-            <div className="flex flex-col items-center justify-center space-y-6 text-center">
-              <p className="text-sm text-slate">Scan the QR code below using any UPI app (GPay, PhonePe, Paytm) to pay <strong className="text-charcoal font-bold">₹ {total.toFixed(2)}</strong>.</p>
+          <div className="bg-white p-8 md:p-12 border border-charcoal/5 shadow-sm animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="flex flex-col items-center justify-center text-center space-y-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-cream mb-2">
+                <QrCode className="w-6 h-6 text-rose-gold" />
+              </div>
+              <h2 className="font-serif text-2xl text-charcoal">Secure UPI Payment</h2>
+              <p className="text-sm text-slate max-w-sm">
+                Scan the QR code below using any UPI app (GPay, PhonePe, Paytm) to securely pay <strong className="text-rose-gold font-bold text-lg">₹ {total.toFixed(2)}</strong>
+              </p>
               
-              <div className="p-4 bg-white border-2 border-charcoal/10 rounded-xl shadow-sm">
+              <div className="relative p-6 bg-white border border-rose-gold/30 rounded-2xl shadow-[0_0_40px_rgba(212,175,55,0.1)]">
+                <div className="absolute inset-0 border-2 border-rose-gold/20 rounded-2xl m-2 pointer-events-none"></div>
                 <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=kaneera@upi&pn=Kaneera&am=${total.toFixed(2)}`)}`} 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=8595511900@ibl&pn=Kaneera&am=${total.toFixed(2)}`)}`} 
                   alt="UPI QR Code" 
-                  className="w-48 h-48"
+                  className="w-48 h-48 relative z-10"
                 />
               </div>
 
-              <div className="bg-cream/50 p-4 w-full rounded-md border border-rose-gold/20">
-                <p className="text-xs font-semibold uppercase tracking-widest text-charcoal mb-1">UPI ID</p>
-                <p className="text-lg font-mono text-charcoal select-all">kaneera@upi</p>
+              <div className="bg-cream/50 p-5 w-full rounded-xl border border-charcoal/5 flex flex-col items-center justify-center">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate mb-2">Or Pay to UPI ID</p>
+                <p className="text-xl font-mono text-charcoal font-medium select-all bg-white px-6 py-2 rounded shadow-sm border border-charcoal/5">
+                  8595511900@ibl
+                </p>
               </div>
 
-              <form id="payment-form" onSubmit={handlePlaceOrder} className="w-full space-y-4 pt-4 border-t border-charcoal/10">
-                <div className="text-left">
-                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">12-Digit UTR / Transaction ID</label>
+              <form id="payment-form" onSubmit={handlePlaceOrder} className="w-full pt-4">
+                <div className="text-left bg-white p-6 border border-charcoal/10 rounded-xl shadow-sm">
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-charcoal mb-3">12-Digit UTR / Transaction ID</label>
                   <input 
                     required 
                     value={utr} 
                     onChange={e => setUtr(e.target.value)} 
                     type="text" 
-                    className="w-full border border-charcoal/20 bg-transparent px-4 py-3 text-sm focus:border-rose-gold focus:outline-none" 
+                    className="w-full border-b-2 border-charcoal/10 bg-transparent px-2 py-3 text-lg font-mono tracking-widest focus:border-rose-gold focus:outline-none transition-colors text-charcoal placeholder:text-slate-300" 
                     placeholder="e.g. 312345678901" 
                   />
-                  <p className="text-[10px] text-slate mt-2">* Required to verify your payment and process your order.</p>
+                  <p className="text-[10px] text-slate mt-3 italic text-center">* Required to verify your payment and process your order.</p>
                 </div>
               </form>
             </div>
