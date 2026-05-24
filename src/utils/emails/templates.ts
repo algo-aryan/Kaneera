@@ -1,4 +1,4 @@
-export const getOrderConfirmationEmail = (orderId: string, amount: number, address: string) => `
+export const getOrderPaidEmail = (orderId: string, amount: number, address: string) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,9 +22,9 @@ export const getOrderConfirmationEmail = (orderId: string, amount: number, addre
       <div class="logo">KANEERA</div>
       <div class="subtitle">by Aashi</div>
     </div>
-    <h1>Thank You For Your Order</h1>
+    <h1>Payment Verified & Order Confirmed</h1>
     <div class="content">
-      <p>Your beautiful jewelry is being prepared with care. We have received your order and are getting it ready for shipment.</p>
+      <p>Great news! We have successfully received your payment. Your beautiful jewelry is now being prepared with care and will be ready for shipment soon.</p>
       
       <div class="order-details">
         <p><strong>Order ID:</strong> #${orderId.slice(0, 8).toUpperCase()}</p>

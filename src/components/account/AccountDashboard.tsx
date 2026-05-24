@@ -126,12 +126,12 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
                         <h3 className="font-serif text-xl text-charcoal">Order Receipt</h3>
                         <p className="text-xs text-slate mt-1 uppercase tracking-widest">#{selectedOrder.id.split('-')[0].toUpperCase()}</p>
                       </div>
-                      <span className={`px-4 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-full border ${
-                        selectedOrder.status === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 
-                        selectedOrder.status === 'pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                        'bg-slate/10 text-slate border-slate/20'
+                      <span className={`px-4 py-1.5 text-[10px] font-bold tracking-widest uppercase rounded-full border ${
+                        selectedOrder.status === 'paid' || selectedOrder.status === 'delivered' ? 'bg-green-50 text-green-700 border-green-200' : 
+                        (selectedOrder.status === 'pending' && selectedOrder.payment_method === 'manual_upi') ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                        'bg-slate-100 text-slate-600 border-slate-200'
                       }`}>
-                        {selectedOrder.status}
+                        {(selectedOrder.status === 'pending' && selectedOrder.payment_method === 'manual_upi') ? 'Verifying Payment' : selectedOrder.status}
                       </span>
                     </div>
 
@@ -189,61 +189,72 @@ export default function AccountDashboard({ profile, sessionEmail, orders = [] }:
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6">
-                  {orders.map((order) => (
-                    <div key={order.id} className="border border-charcoal/10 bg-white shadow-sm flex flex-col">
-                      {/* Order Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-cream/30 border-b border-charcoal/10 gap-4">
-                        <div className="flex items-center space-x-4">
-                          <div>
-                            <p className="text-[10px] text-slate uppercase tracking-widest font-semibold">Order Placed</p>
-                            <p className="text-sm text-charcoal">{new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                <div className="grid grid-cols-1 gap-6">
+                  {orders.map((order) => {
+                    const isVerifying = order.status === 'pending' && order.payment_method === 'manual_upi';
+                    const statusText = isVerifying ? 'Verifying Payment' : order.status;
+                    const statusColor = order.status === 'paid' || order.status === 'delivered' ? 'bg-green-50 text-green-700 border-green-200' :
+                                        isVerifying ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                                        'bg-slate-100 text-slate-600 border-slate-200';
+
+                    return (
+                    <div key={order.id} className="group border border-charcoal/10 bg-white hover:border-rose-gold/50 transition-colors shadow-sm overflow-hidden flex flex-col sm:flex-row">
+                      {/* Image Thumbnail (Left Side) */}
+                      <div className="w-full sm:w-48 h-48 sm:h-auto bg-cream/30 shrink-0 relative border-b sm:border-b-0 sm:border-r border-charcoal/10 overflow-hidden">
+                        {order.order_items?.[0]?.products?.image_urls?.[0] ? (
+                          <img src={order.order_items[0].products.image_urls[0]} alt="Product" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 mix-blend-multiply" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate/30">
+                            <Package className="w-8 h-8" />
                           </div>
-                          <div className="pl-4 border-l border-charcoal/10">
-                            <p className="text-[10px] text-slate uppercase tracking-widest font-semibold">Total Amount</p>
-                            <p className="text-sm font-medium text-charcoal">₹ {order.total_amount.toFixed(2)}</p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:items-end">
-                          <p className="text-[10px] text-slate uppercase tracking-widest font-semibold mb-1">Order # {order.id.split('-')[0].toUpperCase()}</p>
-                          <span className={`px-3 py-1 text-xs font-semibold tracking-wider uppercase rounded-full border ${
-                            order.status === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 
-                            order.status === 'pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                            'bg-slate/10 text-slate border-slate/20'
-                          }`}>
-                            {order.status}
-                          </span>
+                        )}
+                        {/* Status Badge overlay */}
+                        <div className="absolute top-4 left-4">
+                           <span className={`px-3 py-1 text-[10px] font-bold tracking-widest uppercase rounded shadow-sm border backdrop-blur-md ${statusColor}`}>
+                             {statusText}
+                           </span>
                         </div>
                       </div>
-                      
-                      {/* Order Items */}
-                      <div className="p-4 space-y-4">
-                        {order.order_items?.map((item: any) => (
-                          <div key={item.id} className="flex items-center space-x-4">
-                            <div className="w-16 h-20 bg-cream shrink-0">
-                              {item.products?.image_urls?.[0] ? (
-                                <img src={item.products.image_urls[0]} alt="Product" className="w-full h-full object-cover mix-blend-multiply" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate/30 border border-charcoal/10">
-                                  <Package className="w-6 h-6" />
-                                </div>
-                              )}
+
+                      {/* Content (Right Side) */}
+                      <div className="flex-1 p-6 flex flex-col justify-between">
+                        <div>
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <p className="text-[10px] text-slate uppercase tracking-widest font-semibold mb-1">Order Ref</p>
+                              <p className="text-sm font-mono text-charcoal bg-cream/50 px-2 py-1 rounded inline-block">#{order.id.split('-')[0].toUpperCase()}</p>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-serif text-charcoal truncate">{item.products?.name || 'Jewelry Piece'}</h4>
-                              <p className="text-xs text-slate mt-1">Quantity: {item.quantity}</p>
-                              <p className="text-sm font-medium text-charcoal mt-1">₹ {item.price_at_time.toFixed(2)}</p>
-                            </div>
-                            <div className="hidden sm:block">
-                              <button onClick={() => setSelectedOrder(order)} className="text-xs font-semibold text-rose-gold uppercase tracking-widest hover:text-charcoal transition-colors">
-                                View Details
-                              </button>
+                            <div className="text-right">
+                              <p className="text-[10px] text-slate uppercase tracking-widest font-semibold mb-1">Total</p>
+                              <p className="text-lg font-serif text-charcoal font-medium">₹ {order.total_amount.toFixed(2)}</p>
                             </div>
                           </div>
-                        ))}
+
+                          <div className="space-y-1 mb-6">
+                            {order.order_items?.slice(0, 2).map((item: any) => (
+                              <p key={item.id} className="text-sm text-charcoal line-clamp-1 flex items-center">
+                                <span className="text-slate mr-2 text-xs">{item.quantity}x</span> 
+                                {item.products?.name || 'Jewelry Piece'}
+                              </p>
+                            ))}
+                            {order.order_items?.length > 2 && (
+                              <p className="text-xs text-slate italic">+ {order.order_items.length - 2} more items</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-charcoal/5">
+                          <div>
+                            <p className="text-[10px] text-slate uppercase tracking-widest font-semibold mb-0.5">Placed On</p>
+                            <p className="text-xs text-charcoal">{new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                          </div>
+                          <button onClick={() => setSelectedOrder(order)} className="text-xs font-bold text-charcoal uppercase tracking-widest hover:text-rose-gold transition-colors flex items-center">
+                            View Details <span className="ml-1">→</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               )}
             </div>

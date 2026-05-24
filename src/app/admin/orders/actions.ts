@@ -3,7 +3,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
-import { getOrderShippedEmail, getOrderDeliveredEmail } from "@/utils/emails/templates";
+import { getOrderShippedEmail, getOrderDeliveredEmail, getOrderPaidEmail } from "@/utils/emails/templates";
 
 export async function updateOrderStatus(orderId: string, newStatus: string) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -22,20 +22,27 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
     throw new Error("Failed to update order status");
   }
 
-  // If marked as shipped or delivered, send email
-  if ((newStatus === 'shipped' || newStatus === 'delivered') && order?.profiles?.email) {
+  // If marked as paid, shipped or delivered, send email
+  if ((newStatus === 'paid' || newStatus === 'shipped' || newStatus === 'delivered') && order?.profiles?.email) {
     const resendApiKey = process.env.RESEND_API_KEY;
     if (resendApiKey) {
       try {
         const resend = new Resend(resendApiKey);
         
-        const subject = newStatus === 'shipped' 
-          ? 'Your Order has Shipped! - Kaneera' 
-          : 'Your Order has been Delivered! - Kaneera';
-          
-        const html = newStatus === 'shipped'
-          ? getOrderShippedEmail(orderId)
-          : getOrderDeliveredEmail(orderId);
+        let subject = '';
+        let html = '';
+
+        if (newStatus === 'paid') {
+          subject = 'Payment Verified & Order Confirmed! - Kaneera';
+          const address = typeof order.shipping_address === 'string' ? order.shipping_address : order.shipping_address?.address || 'Your Address';
+          html = getOrderPaidEmail(orderId, order.total_amount, address);
+        } else if (newStatus === 'shipped') {
+          subject = 'Your Order has Shipped! - Kaneera';
+          html = getOrderShippedEmail(orderId);
+        } else if (newStatus === 'delivered') {
+          subject = 'Your Order has been Delivered! - Kaneera';
+          html = getOrderDeliveredEmail(orderId);
+        }
 
         await resend.emails.send({
           from: 'Kaneera <orders@kaneera.in>',

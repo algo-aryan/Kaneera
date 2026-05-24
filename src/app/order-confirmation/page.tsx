@@ -17,11 +17,13 @@ export default async function OrderConfirmationPage({
     redirect('/login');
   }
 
+  let orderData = null;
+
   // Optionally verify the order belongs to the user
   if (orderId) {
     const { data: order } = await supabase
       .from('orders')
-      .select('id, status')
+      .select('id, status, payment_method')
       .eq('id', orderId)
       .eq('user_id', user.id)
       .single();
@@ -30,20 +32,25 @@ export default async function OrderConfirmationPage({
       // Order not found or doesn't belong to user
       redirect('/');
     }
+    orderData = order;
   }
+
+  const isVerifying = orderData?.payment_method === 'manual_upi' && orderData?.status === 'pending';
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-[#FDFBF7] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white p-8 border border-charcoal/5 shadow-xl text-center">
-        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 className="w-10 h-10 text-green-500" />
+        <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${isVerifying ? 'bg-yellow-50' : 'bg-green-50'}`}>
+          <CheckCircle2 className={`w-10 h-10 ${isVerifying ? 'text-yellow-500' : 'text-green-500'}`} />
         </div>
         
         <h1 className="font-serif text-3xl font-bold tracking-tight text-charcoal mb-2">
-          Order Confirmed!
+          {isVerifying ? 'Verifying Payment' : 'Order Confirmed!'}
         </h1>
         <p className="text-sm text-slate mb-8">
-          Thank you for shopping with Kaneera by Aashi. Your elegant pieces will be on their way to you soon.
+          {isVerifying 
+            ? 'Thank you for shopping with Kaneera. Your order has been received and our team is currently verifying your UPI payment. We will notify you once confirmed.' 
+            : 'Thank you for shopping with Kaneera by Aashi. Your elegant pieces will be on their way to you soon.'}
         </p>
         
         {orderId && (
