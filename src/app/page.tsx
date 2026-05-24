@@ -17,7 +17,7 @@ const categories = [
 
 const banners = [
   { 
-    image: "/carousel_banner_1.png", 
+    image: "/wide_banner_1.png", 
     title: "THE ART OF ELEGANCE", 
     subtitle: "Discover our latest collection of premium jewelry.",
     button: "Shop Now",
@@ -25,7 +25,7 @@ const banners = [
     bgHex: "#FAF5F0"
   },
   { 
-    image: "/carousel_banner_2.png", 
+    image: "/wide_banner_2.png", 
     title: "TIMELESS BEAUTY", 
     subtitle: "Exquisite pieces that define sophistication.",
     button: "Explore",
@@ -33,7 +33,7 @@ const banners = [
     bgHex: "#F8EFEA"
   },
   { 
-    image: "/carousel_banner_3.png", 
+    image: "/wide_banner_3.png", 
     title: "THE PERFECT GIFT", 
     subtitle: "Beautifully packaged. Unforgettable elegance.",
     button: "Gift Now",
@@ -96,8 +96,8 @@ export default function Home() {
           />
         </AnimatePresence>
         
-        {/* Dynamic Text Overlay in Center */}
-        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none px-4">
+        {/* Dynamic Text Overlay Left-Aligned */}
+        <div className="absolute inset-0 flex items-center justify-start z-10 pointer-events-none px-6 sm:px-12 md:px-24 w-full md:w-3/5">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentBanner}
@@ -105,12 +105,12 @@ export default function Home() {
               animate="visible"
               exit="hidden"
               variants={staggerContainer}
-              className={`text-center pointer-events-auto ${banners[currentBanner].textColor} drop-shadow-md`}
+              className={`text-left pointer-events-auto ${banners[currentBanner].textColor} drop-shadow-sm`}
             >
-              <motion.h1 variants={fadeInUp} className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-wide mb-2 md:mb-4 whitespace-nowrap">
+              <motion.h1 variants={fadeInUp} className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-wide mb-2 md:mb-4">
                 {banners[currentBanner].title}
               </motion.h1>
-              <motion.p variants={fadeInUp} className="text-sm md:text-xl font-light mb-4 md:mb-6">
+              <motion.p variants={fadeInUp} className="text-sm md:text-xl font-light mb-6 md:mb-8 max-w-md">
                 {banners[currentBanner].subtitle}
               </motion.p>
               <motion.div variants={fadeInUp}>
@@ -228,7 +228,7 @@ export default function Home() {
         <Link href="/category/all" className="block relative group w-full">
           <div className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[3/1] lg:aspect-[4/1] overflow-hidden">
             <img 
-              src="/first_access_banner_new.png" 
+              src="/wide_first_access_banner.png" 
               alt="First Access - Explore the New Collection" 
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
