@@ -80,7 +80,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             src={banners[currentBanner].image} 
             alt="Kaneera Premium Jewelry"
-            className="w-full h-full object-cover sm:object-contain object-center absolute inset-0"
+            className="w-full h-full object-cover object-center absolute inset-0"
           />
         </AnimatePresence>
         
