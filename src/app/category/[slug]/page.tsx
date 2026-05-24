@@ -22,8 +22,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CategoryPage({ 
+  params,
+  searchParams
+}: { 
+  params: Promise<{ slug: string }>,
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const { slug } = await params;
+  const sParams = await searchParams;
   
   const title = slug === 'all' ? 'All Collections' : slug.charAt(0).toUpperCase() + slug.slice(1);
   
@@ -32,6 +39,19 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   
   if (slug !== 'all') {
     query = query.eq('categories.slug', slug);
+  }
+  
+  const maxPrice = sParams.maxPrice ? parseFloat(sParams.maxPrice as string) : undefined;
+  if (maxPrice) {
+    query = query.lte('price', maxPrice);
+  }
+  
+  const recipient = sParams.recipient as string | undefined;
+  if (recipient) {
+    // Since recipient will be a TEXT[], we check if the array contains the value.
+    // We capitalise the first letter to match "Wife", "Mother"
+    const capitalized = recipient.charAt(0).toUpperCase() + recipient.slice(1);
+    query = query.contains('recipient', [capitalized]);
   }
 
   const { data: dbProducts } = await query;

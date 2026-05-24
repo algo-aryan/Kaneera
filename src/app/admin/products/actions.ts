@@ -14,7 +14,7 @@ export async function addProduct(formData: FormData) {
   const categoryId = formData.get('categoryId') as string;
   const imageUrlsString = formData.get('imageUrls') as string;
   
-  const recipient = formData.get('recipient') as string;
+  const recipient = formData.getAll('recipient') as string[];
   const material_color = formData.get('material_color') as string;
 
   if (!name || !price || !categoryId || !imageUrlsString) {
@@ -61,7 +61,7 @@ export async function editProduct(id: string, formData: FormData) {
   const categoryId = formData.get('categoryId') as string;
   const imageUrlsString = formData.get('imageUrls') as string;
   
-  const recipient = formData.get('recipient') as string;
+  const recipient = formData.getAll('recipient') as string[];
   const material_color = formData.get('material_color') as string;
 
   if (!name || !price || !categoryId || !imageUrlsString) {

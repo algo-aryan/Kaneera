@@ -78,16 +78,18 @@ export default function EditProductModal({ categories, product }: { categories: 
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Recipient</label>
-                  <select defaultValue={product.recipient || ""} name="recipient" className="w-full border border-charcoal/20 bg-transparent px-4 py-2 text-sm focus:border-rose-gold focus:outline-none rounded">
-                    <option value="">Any</option>
-                    <option value="Mother">Mother</option>
-                    <option value="Sister">Sister</option>
-                    <option value="Wife">Wife</option>
-                    <option value="Friends">Friends</option>
-                    <option value="Husband">Husband</option>
-                    <option value="Brother">Brother</option>
-                  </select>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-2">Recipients (Check all that apply)</label>
+                  <div className="space-y-2 border border-charcoal/20 rounded p-3 h-32 overflow-y-auto bg-transparent">
+                    {["Mother", "Sister", "Wife", "Friends", "Husband", "Brother"].map((bond) => {
+                      const isChecked = Array.isArray(product.recipient) ? product.recipient.includes(bond) : product.recipient === bond;
+                      return (
+                        <label key={bond} className="flex items-center space-x-2">
+                          <input type="checkbox" name="recipient" value={bond} defaultChecked={isChecked} className="rounded text-rose-gold focus:ring-rose-gold" />
+                          <span className="text-sm text-slate-700">{bond}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate mb-1">Material Color</label>

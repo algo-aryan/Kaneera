@@ -21,7 +21,7 @@ const banners = [
     subtitle: "Aashi picked these. Your turn now.",
     button: "Shop Now",
     textColor: "text-charcoal",
-    bg: "bg-[#FFE8E2]"
+    bgHex: "#FFE8E2"
   },
   { 
     image: "/banner_strip_3.png", 
@@ -29,7 +29,7 @@ const banners = [
     subtitle: "Beautifully packaged. Unforgettable elegance.",
     button: "Gift Now",
     textColor: "text-charcoal",
-    bg: "bg-[#FAD9D7]"
+    bgHex: "#FAD9D7"
   },
   { 
     image: "/banner_box_style.png", 
@@ -37,7 +37,7 @@ const banners = [
     subtitle: "New designs destined to become bestsellers.",
     button: "Explore",
     textColor: "text-white",
-    bg: "bg-[#4B101D]"
+    bgHex: "#4B101D"
   }
 ];
 
@@ -67,8 +67,10 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Ultra-Thin Hero Carousel (Strip Format) */}
-      {/* We use aspect ratio to prevent cutting, and object-contain on mobile to ensure it's fully visible */}
-      <section className={`relative w-full aspect-[4/3] md:aspect-[3/1] lg:aspect-[4/1] ${banners[currentBanner].bg} overflow-hidden group transition-colors duration-1000`}>
+      <section 
+        className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] overflow-hidden group transition-colors duration-1000"
+        style={{ backgroundColor: banners[currentBanner].bgHex }}
+      >
         <AnimatePresence mode="wait">
           <motion.img 
             key={currentBanner}
@@ -78,7 +80,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             src={banners[currentBanner].image} 
             alt="Kaneera Premium Jewelry"
-            className="w-full h-full object-cover md:object-contain object-center absolute inset-0"
+            className="w-full h-full object-cover sm:object-contain object-center absolute inset-0"
           />
         </AnimatePresence>
         
@@ -156,12 +158,12 @@ export default function Home() {
       <section className="py-8 bg-white border-t border-slate-100">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 max-w-4xl mx-auto">
-            <Link href="/category/under-399" className="w-full md:w-1/3">
+            <Link href="/category/all?maxPrice=399" className="w-full md:w-1/3">
               <div className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE4E4] rounded-full py-4 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF0F0]">
                 <span className="font-medium text-charcoal text-base md:text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹399</span>
               </div>
             </Link>
-            <Link href="/category/under-799" className="w-full md:w-1/3">
+            <Link href="/category/all?maxPrice=799" className="w-full md:w-1/3">
               <div className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE4E4] rounded-full py-4 text-center shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-[#FFF0F0]">
                 <span className="font-medium text-charcoal text-base md:text-lg group-hover:text-[#D4AF37] transition-colors">Under ₹799</span>
               </div>
@@ -184,12 +186,12 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
             {[
-              { title: "Wife", img: "/bond_wife_1779595089303.png" },
-              { title: "Mother", img: "/bond_mother_real.png" },
-              { title: "Sister", img: "/bond_sister_real.png" },
-              { title: "Friends", img: "/bond_friends_1779595135834.png" }
+              { title: "Wife", img: "/bond_wife_1779595089303.png", query: "wife" },
+              { title: "Mother", img: "/bond_mother_real.png", query: "mother" },
+              { title: "Sister", img: "/bond_sister_real.png", query: "sister" },
+              { title: "Friends", img: "/bond_friends_1779595135834.png", query: "friends" }
             ].map((bond, idx) => (
-              <Link href="/category/all" key={idx} className="group flex flex-col items-center">
+              <Link href={`/category/all?recipient=${bond.query}`} key={idx} className="group flex flex-col items-center">
                 <div className="w-full aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden mb-3 bg-slate-100 shadow-sm group-hover:shadow-lg transition-shadow duration-300">
                    <img 
                       src={bond.img} 
